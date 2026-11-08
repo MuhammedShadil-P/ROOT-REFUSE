@@ -25,7 +25,7 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
   const animFrameRef = useRef(null);
   const isDraggingRef = useRef(false);
   const isSnappingRef = useRef(false);
-  const startPointerRef = useRef({ x: 0, y: 0 });
+  const startPointerRef = useRef({ x: 0, y: 0, time: 0 });
 
   // Update bin center coordinates
   const updateBinCenter = useCallback(() => {
@@ -41,10 +41,12 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
   useEffect(() => {
     updateBinCenter();
     window.addEventListener('resize', updateBinCenter);
-    window.addEventListener('scroll', updateBinCenter);
+    window.addEventListener('scroll', updateBinCenter, { passive: true });
     return () => {
       window.removeEventListener('resize', updateBinCenter);
       window.removeEventListener('scroll', updateBinCenter);
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     };
   }, [updateBinCenter]);
 
@@ -77,13 +79,12 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
       osc.start(now);
       osc.stop(now + 0.36);
     } catch (e) {
-      // AudioContext policy
+      // Audio policy
     }
   }, [soundEnabled]);
 
   // Recycle action
   const recycleItem = useCallback((item, clickX, clickY) => {
-    // 1. Particle Confetti burst from bin target or item location
     try {
       const originX = clickX ? clickX / window.innerWidth : 0.88;
       const originY = clickY ? clickY / window.innerHeight : 0.88;
@@ -96,18 +97,14 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
       });
     } catch (e) {}
 
-    // 2. Play Audio
     playEcoChime();
 
-    // 3. Trigger Reward
     if (onReward) {
       onReward(10, item);
     }
 
-    // 4. Update count
     setCatchCount(prev => prev + 1);
 
-    // 5. Show toast
     setToast({
       title: '+10 ECO-CREDITS',
       desc: `${item.name.toUpperCase()} DIVERTED!`,
@@ -115,13 +112,14 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
       icon: item.icon
     });
 
-    // 6. Reset item state
     setFallingItem(null);
     setIsDragging(false);
     setIsSnapping(false);
     setIsHoveringBin(false);
     isDraggingRef.current = false;
     isSnappingRef.current = false;
+    document.body.style.overflow = '';
+    document.body.style.touchAction = '';
   }, [onReward, playEcoChime]);
 
   // Gentle Spawning Timer (Initial spawn 10s, then every 28-40s)
@@ -135,8 +133,8 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
     const scheduleNextSpawn = (delay) => {
       timeoutId = setTimeout(() => {
         const randomItem = SCRAP_ITEMS[Math.floor(Math.random() * SCRAP_ITEMS.length)];
-        const minX = Math.max(40, window.innerWidth * 0.15);
-        const maxX = Math.min(window.innerWidth - 80, window.innerWidth * 0.85);
+        const minX = Math.max(35, window.innerWidth * 0.12);
+        const maxX = Math.min(window.innerWidth - 65, window.innerWidth * 0.88);
         const startX = Math.random() * (maxX - minX) + minX;
 
         setFallingItem({
@@ -172,7 +170,7 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
 
       const elapsed = (Date.now() - startTime) / 1000;
       const newY = -60 + elapsed * speed;
-      const sway = Math.sin(elapsed * 2.5) * 22;
+      const sway = Math.sin(elapsed * 2.5) * 20;
       const newX = fallingItem.startX + sway;
 
       if (newY > window.innerHeight + 80) {
@@ -201,7 +199,6 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
     setIsSnapping(true);
     setIsHoveringBin(true);
 
-    // Animate coordinates to bin center
     setFallingItem(prev => (prev ? { ...prev, x: targetX, y: targetY } : null));
 
     setTimeout(() => {
@@ -209,62 +206,83 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
     }, 220);
   }, [recycleItem]);
 
-  // Drag-and-drop pointer handlers
+  // Extract coordinates from pointer or touch event
+  const getEventCoords = (e) => {
+    if (e.touches && e.touches.length > 0) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+    }
+    return { x: e.clientX, y: e.clientY };
+  };
+
+  // Drag-and-drop pointer / touch handlers with body scroll lock
   const handlePointerDown = (e) => {
     e.stopPropagation();
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault();
+
+    // Lock page background scrolling on mobile while dragging trash
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
     isDraggingRef.current = true;
     setIsDragging(true);
-    startPointerRef.current = { x: e.clientX, y: e.clientY };
+
+    const { x, y } = getEventCoords(e);
+    startPointerRef.current = { x, y, time: Date.now() };
     updateBinCenter();
 
     const handlePointerMove = (moveEvent) => {
       if (!isDraggingRef.current || isSnappingRef.current) return;
+      if (moveEvent.cancelable) moveEvent.preventDefault();
+
+      const coords = getEventCoords(moveEvent);
 
       if (binRef.current) {
         const binRect = binRef.current.getBoundingClientRect();
         const bCenterX = binRect.left + binRect.width / 2;
         const bCenterY = binRect.top + binRect.height / 2;
-        const dist = Math.hypot(moveEvent.clientX - bCenterX, moveEvent.clientY - bCenterY);
+        const dist = Math.hypot(coords.x - bCenterX, coords.y - bCenterY);
 
-        // Hover detection
-        setIsHoveringBin(dist < 120);
+        // Hover proximity detection
+        setIsHoveringBin(dist < 115);
 
         // Auto-snap when dragged directly into the bin vortex
-        if (dist < 55 && fallingItem) {
-          window.removeEventListener('pointermove', handlePointerMove);
-          window.removeEventListener('pointerup', handlePointerUp);
+        if (dist < 48 && fallingItem) {
+          cleanup();
           triggerSnapToBin(fallingItem.item);
           return;
         }
       }
 
-      setFallingItem(prev => (prev ? { ...prev, x: moveEvent.clientX, y: moveEvent.clientY } : null));
+      setFallingItem(prev => (prev ? { ...prev, x: coords.x, y: coords.y } : null));
     };
 
     const handlePointerUp = (upEvent) => {
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', handlePointerUp);
+      cleanup();
 
       if (isSnappingRef.current) return;
 
-      const deltaX = Math.abs(upEvent.clientX - startPointerRef.current.x);
-      const deltaY = Math.abs(upEvent.clientY - startPointerRef.current.y);
-      const wasClick = deltaX < 8 && deltaY < 8;
+      const coords = getEventCoords(upEvent);
+      const deltaX = Math.abs(coords.x - startPointerRef.current.x);
+      const deltaY = Math.abs(coords.y - startPointerRef.current.y);
+      const elapsed = Date.now() - startPointerRef.current.time;
 
-      if (wasClick) {
-        // Direct click/tap anywhere on falling item instantly recycles
+      const wasTap = (deltaX < 14 && deltaY < 14) || elapsed < 220;
+
+      if (wasTap) {
+        // Direct tap on falling item recycles immediately
         if (fallingItem) {
-          recycleItem(fallingItem.item, upEvent.clientX, upEvent.clientY);
+          recycleItem(fallingItem.item, coords.x, coords.y);
         }
       } else if (binRef.current) {
-        // Dropped near or on the bin
         const binRect = binRef.current.getBoundingClientRect();
         const bCenterX = binRect.left + binRect.width / 2;
         const bCenterY = binRect.top + binRect.height / 2;
-        const dist = Math.hypot(upEvent.clientX - bCenterX, upEvent.clientY - bCenterY);
+        const dist = Math.hypot(coords.x - bCenterX, coords.y - bCenterY);
 
-        if (dist < 130 && fallingItem) {
+        if (dist < 125 && fallingItem) {
           triggerSnapToBin(fallingItem.item);
         } else {
           setIsDragging(false);
@@ -278,8 +296,30 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
       }
     };
 
-    window.addEventListener('pointermove', handlePointerMove);
+    const handlePointerCancel = () => {
+      cleanup();
+      setIsDragging(false);
+      isDraggingRef.current = false;
+      setIsHoveringBin(false);
+    };
+
+    const cleanup = () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerCancel);
+      window.removeEventListener('touchmove', handlePointerMove);
+      window.removeEventListener('touchend', handlePointerUp);
+      window.removeEventListener('touchcancel', handlePointerCancel);
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
+
+    window.addEventListener('pointermove', handlePointerMove, { passive: false });
     window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerCancel);
+    window.addEventListener('touchmove', handlePointerMove, { passive: false });
+    window.addEventListener('touchend', handlePointerUp);
+    window.addEventListener('touchcancel', handlePointerCancel);
   };
 
   // Toast timer auto-dismiss
@@ -300,7 +340,7 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
         <svg className="fixed inset-0 pointer-events-none z-45 w-full h-full">
           <defs>
             <linearGradient id="ecoGuideGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#CCFF00" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#CCFF00" stopOpacity="0.85" />
               <stop offset="100%" stopColor="#10B981" stopOpacity="0.95" />
             </linearGradient>
             <filter id="glowLine">
@@ -330,7 +370,7 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
           <circle
             cx={binCenter.x}
             cy={binCenter.y}
-            r="48"
+            r="42"
             fill="none"
             stroke="#CCFF00"
             strokeWidth="2.5"
@@ -342,7 +382,7 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
           <circle
             cx={binCenter.x}
             cy={binCenter.y}
-            r="28"
+            r="24"
             fill="#CCFF00"
             fillOpacity="0.15"
             stroke="#CCFF00"
@@ -362,62 +402,65 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
           style={{
             left: `${fallingItem.x}px`,
             top: `${fallingItem.y}px`,
-            transition: isDraggingRef.current && !isSnapping ? 'none' : isSnapping ? 'all 0.22s cubic-bezier(0.2, 0.9, 0.3, 1)' : 'transform 0.05s linear'
+            transition: isDraggingRef.current && !isSnapping ? 'none' : isSnapping ? 'all 0.22s cubic-bezier(0.2, 0.9, 0.3, 1)' : 'transform 0.05s linear',
+            touchAction: 'none'
           }}
           onPointerDown={handlePointerDown}
+          onTouchStart={handlePointerDown}
           onClick={(e) => {
             e.stopPropagation();
             recycleItem(fallingItem.item, fallingItem.x, fallingItem.y);
           }}
           title="Click or drag to Smart Bin to recycle (+10 Eco-Credits)"
         >
-          <div className="relative group flex items-center gap-2">
+          <div className="relative group flex items-center gap-1.5 sm:gap-2">
             {/* Scrap Badge & Icon */}
-            <div className={`relative p-2.5 sm:p-3 bg-obsidian-950/95 text-white border-2 rounded-full transition-all flex items-center justify-center ${
+            <div className={`relative p-2 sm:p-2.5 md:p-3 bg-obsidian-950/95 text-white border-2 rounded-full transition-all flex items-center justify-center ${
               isHoveringBin
-                ? 'border-emerald-400 scale-125 shadow-[0_0_25px_#10B981]'
+                ? 'border-emerald-400 scale-120 shadow-[0_0_25px_#10B981]'
                 : isDragging
-                ? 'border-lime scale-115 shadow-glow-lime'
+                ? 'border-lime scale-110 shadow-glow-lime'
                 : 'border-lime shadow-glow-lime hover:scale-110 active:scale-95'
             }`}>
-              <span className="text-2xl sm:text-3xl filter drop-shadow-md select-none">{fallingItem.item.icon}</span>
-              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-lime rounded-full animate-ping"></span>
+              <span className="text-xl sm:text-2xl md:text-3xl filter drop-shadow-md select-none">{fallingItem.item.icon}</span>
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 bg-lime rounded-full animate-ping"></span>
             </div>
 
             {/* Drag Guidance Directional Pill */}
             {isDragging ? (
-              <div className="bg-lime text-obsidian-950 border-2 border-obsidian-950 px-2.5 py-1 rounded-full font-mono text-[10px] uppercase font-black tracking-wider pointer-events-none shadow-brutal-sm flex items-center gap-1.5 animate-bounce">
-                <span>DRAG TO BIN</span>
-                <ArrowDownRight className="w-3.5 h-3.5 stroke-[3]" />
+              <div className="bg-lime text-obsidian-950 border-2 border-obsidian-950 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full font-mono text-[9px] sm:text-[10px] uppercase font-black tracking-wider pointer-events-none shadow-brutal-sm flex items-center gap-1 sm:gap-1.5 animate-bounce whitespace-nowrap">
+                <span className="hidden sm:inline">DRAG TO BIN</span>
+                <span className="sm:hidden">DRAG ↘</span>
+                <ArrowDownRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[3]" />
               </div>
             ) : (
-              <div className="bg-obsidian-950/90 text-lime border border-lime/40 px-2.5 py-1 rounded-xs font-mono text-[9px] uppercase font-bold tracking-wider pointer-events-none shadow-brutal-sm hidden sm:flex items-center gap-1 whitespace-nowrap">
+              <div className="bg-obsidian-950/90 text-lime border border-lime/40 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xs font-mono text-[8px] sm:text-[9px] uppercase font-bold tracking-wider pointer-events-none shadow-brutal-sm hidden xs:flex sm:flex items-center gap-1 whitespace-nowrap">
                 <span>{fallingItem.item.tag}</span>
-                <span className="text-white ml-1 font-black">● +10 PTS</span>
+                <span className="text-white ml-0.5 sm:ml-1 font-black">● +10</span>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* 3. Docked Smart Recycle Bin Target (Glowing Drop Zone) */}
+      {/* 3. Docked Smart Recycle Bin Target (Responsive Mobile Drop Zone) */}
       <div
         ref={binRef}
-        className={`fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 select-none transition-all duration-300 animate-bounce-subtle ${
+        className={`fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-40 select-none transition-all duration-300 animate-bounce-subtle ${
           isHoveringBin
-            ? 'scale-120 -translate-y-2'
+            ? 'scale-110 -translate-y-1 sm:scale-120 sm:-translate-y-2'
             : isDragging
-            ? 'scale-115 -translate-y-1'
+            ? 'scale-105 sm:scale-115 -translate-y-0.5 sm:-translate-y-1'
             : fallingItem
             ? 'scale-105'
             : 'scale-100'
         }`}
       >
-        {/* Floating Directional Banner: "DROP HERE TO RECYCLE!" */}
+        {/* Floating Directional Banner: "DROP HERE!" on mobile, "DROP HERE TO RECYCLE!" on desktop */}
         <div
-          className={`absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap px-3.5 py-1 rounded-full text-[10px] font-mono font-black uppercase tracking-wider transition-all duration-200 shadow-brutal flex items-center gap-1.5 border-2 ${
+          className={`absolute -top-7 sm:-top-10 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 sm:px-3.5 py-0.5 sm:py-1 rounded-full text-[8px] sm:text-[10px] font-mono font-black uppercase tracking-wider transition-all duration-200 shadow-brutal flex items-center gap-1 sm:gap-1.5 border-2 ${
             isHoveringBin
-              ? 'bg-emerald-400 text-obsidian-950 border-obsidian-950 scale-110 animate-pulse shadow-[0_0_25px_#10B981]'
+              ? 'bg-emerald-400 text-obsidian-950 border-obsidian-950 scale-105 sm:scale-110 animate-pulse shadow-[0_0_20px_#10B981]'
               : isDragging
               ? 'bg-lime text-obsidian-950 border-obsidian-950 scale-105 animate-bounce shadow-glow-lime'
               : fallingItem
@@ -425,28 +468,29 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
               : 'bg-obsidian-950 text-lime border-lime/80 shadow-glow-lime'
           }`}
         >
-          <span className={`w-2 h-2 rounded-full ${isHoveringBin ? 'bg-obsidian-950 animate-ping' : 'bg-lime animate-ping'}`}></span>
-          <span>{isHoveringBin ? 'RELEASE TO SNAP!' : 'DROP HERE TO RECYCLE!'}</span>
+          <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${isHoveringBin ? 'bg-obsidian-950 animate-ping' : 'bg-lime animate-ping'}`}></span>
+          <span className="hidden sm:inline">{isHoveringBin ? 'RELEASE TO SNAP!' : 'DROP HERE TO RECYCLE!'}</span>
+          <span className="sm:hidden">{isHoveringBin ? 'SNAP!' : 'DROP HERE!'}</span>
         </div>
 
         {/* Main Docked Bin Capsule */}
         <div
-          className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full border-2 transition-all shadow-brutal backdrop-blur-md ${
+          className={`flex items-center gap-1.5 sm:gap-3 p-1.5 sm:px-3.5 sm:py-2.5 rounded-full border-2 transition-all shadow-brutal backdrop-blur-md ${
             isHoveringBin
-              ? 'bg-lime text-obsidian-950 border-obsidian-950 ring-4 ring-lime/80 shadow-[0_0_45px_#CCFF00]'
+              ? 'bg-lime text-obsidian-950 border-obsidian-950 ring-4 ring-lime/80 shadow-[0_0_40px_#CCFF00]'
               : isDragging
               ? 'bg-obsidian-950 text-white border-lime ring-4 ring-lime/40 shadow-[0_0_30px_rgba(204,255,0,0.6)] animate-pulse-glow'
               : 'bg-obsidian-950 text-white border-lime animate-pulse-glow'
           }`}
         >
           {/* Recycle Icon Badge */}
-          <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all ${
+          <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center border-2 transition-all shrink-0 ${
             isHoveringBin
               ? 'bg-obsidian-950 text-lime border-obsidian-950 scale-110'
               : 'bg-lime text-obsidian-950 border-lime'
           }`}>
             <Recycle
-              className={`w-4 h-4 stroke-[2.5] ${
+              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] ${
                 isHoveringBin
                   ? 'animate-spin'
                   : isDragging || fallingItem
@@ -457,8 +501,8 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
             />
           </div>
 
-          {/* Details Label */}
-          <div className="flex flex-col pr-1 text-left">
+          {/* Details Label (Hidden on small mobile screens to keep bin compact & non-intrusive) */}
+          <div className="hidden sm:flex flex-col pr-1 text-left">
             <span className="font-editorial-condensed text-xs font-black uppercase tracking-wider leading-none">
               {isHoveringBin ? 'MAGNETIC DUMP' : 'SMART RECYCLE BIN'}
             </span>
@@ -473,10 +517,10 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
               e.stopPropagation();
               setSoundEnabled(!soundEnabled);
             }}
-            className="w-7 h-7 rounded-full bg-obsidian-900 border border-white/20 hover:border-lime flex items-center justify-center text-white/70 hover:text-lime transition-colors"
+            className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-obsidian-900 border border-white/20 hover:border-lime flex items-center justify-center text-white/70 hover:text-lime transition-colors shrink-0"
             title={soundEnabled ? "Mute Eco-Catch Sound" : "Enable Eco-Catch Sound"}
           >
-            {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-lime" /> : <VolumeX className="w-3.5 h-3.5 text-white/40" />}
+            {soundEnabled ? <Volume2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-lime" /> : <VolumeX className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white/40" />}
           </button>
 
           {/* Quiet Close / Disable Button */}
@@ -486,10 +530,10 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
                 e.stopPropagation();
                 onToggle();
               }}
-              className="w-7 h-7 rounded-full bg-obsidian-900 border border-white/20 hover:border-rose-500 hover:text-rose-400 flex items-center justify-center text-white/60 transition-colors"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-obsidian-900 border border-white/20 hover:border-rose-500 hover:text-rose-400 flex items-center justify-center text-white/60 transition-colors shrink-0"
               title="Turn Off Eco-Catch Game"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </button>
           )}
         </div>
@@ -497,27 +541,27 @@ export default function EcoCatch({ onReward, isEnabled, onToggle }) {
 
       {/* 4. Sleek Cyber-Green Toast Notification */}
       {toast && (
-        <div className="fixed top-24 right-5 z-50 animate-bounce max-w-sm select-none">
-          <div className="bg-obsidian-950 text-white border-2 border-lime shadow-brutal-lime p-3.5 rounded-sm flex items-center gap-3">
-            <div className="w-9 h-9 bg-lime text-obsidian-950 flex items-center justify-center rounded-xs text-xl shrink-0">
+        <div className="fixed top-20 sm:top-24 right-3 sm:right-5 z-50 animate-bounce max-w-[calc(100vw-24px)] sm:max-w-sm select-none">
+          <div className="bg-obsidian-950 text-white border-2 border-lime shadow-brutal-lime p-2.5 sm:p-3.5 rounded-sm flex items-center gap-2.5 sm:gap-3">
+            <div className="w-7 h-7 sm:w-9 sm:h-9 bg-lime text-obsidian-950 flex items-center justify-center rounded-xs text-base sm:text-xl shrink-0">
               {toast.icon}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="font-editorial-condensed font-black text-xs text-lime uppercase tracking-wider">
+                <span className="font-editorial-condensed font-black text-[11px] sm:text-xs text-lime uppercase tracking-wider">
                   {toast.title}
                 </span>
-                <span className="font-mono text-[9px] text-white/50 uppercase">VERIFIED</span>
+                <span className="font-mono text-[8px] sm:text-[9px] text-white/50 uppercase">VERIFIED</span>
               </div>
-              <p className="font-mono text-[11px] text-white font-bold truncate mt-0.5">
+              <p className="font-mono text-[10px] sm:text-[11px] text-white font-bold truncate mt-0.5">
                 {toast.desc}
               </p>
             </div>
             <button
               onClick={() => setToast(null)}
-              className="text-white/40 hover:text-white p-1"
+              className="text-white/40 hover:text-white p-1 shrink-0"
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             </button>
           </div>
         </div>
