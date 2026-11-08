@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth overflow-x-hidden max-w-full">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230B0B0B'/><circle cx='50' cy='50' r='30' fill='%23CCFF00'/><text x='50' y='64' font-family='Arial' font-size='42' font-weight='900' text-anchor='middle' fill='%230B0B0B'>*</text></svg>" />
@@ -233,9 +233,25 @@
         animation: backdropFade 0.25s ease-out forwards;
       }
 
+      /* Mobile Viewport & Responsive Resets */
+      html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+        -webkit-text-size-adjust: 100%;
+      }
+      #root {
+        max-width: 100%;
+        overflow-x: hidden;
+        width: 100%;
+        min-height: 100vh;
+      }
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
     </style>
   </head>
-  <body class="bg-canvas text-obsidian-950 font-sans antialiased selection:bg-lime selection:text-obsidian-950 overflow-x-hidden">
+  <body class="bg-canvas text-obsidian-950 font-sans antialiased selection:bg-lime selection:text-obsidian-950 overflow-x-hidden max-w-full w-full min-h-screen">
     <div id="root"></div>
 
     <!-- Application Script (React / JSX via Babel) -->
@@ -948,7 +964,7 @@
         };
 
         return (
-          <div className={`min-h-screen flex flex-col font-sans selection:bg-lime selection:text-obsidian-950 transition-colors duration-300 ${
+          <div className={`min-h-screen flex flex-col font-sans selection:bg-lime selection:text-obsidian-950 transition-colors duration-300 w-full max-w-full overflow-x-hidden ${
             theme === 'dark' ? 'cyber-dark-theme bg-obsidian-950 text-white' : 'bg-canvas text-obsidian-950'
           }`}>
             <CustomCursor />
@@ -965,7 +981,7 @@
             />
 
             {/* Main Page Route Switcher */}
-            <main className="flex-1">
+            <main className="flex-1 w-full max-w-full overflow-x-hidden">
               {currentPage === 'home' && (
                 <HomePage
                   onNavigate={navigateTo}
@@ -1168,7 +1184,7 @@
                   {onToggleTheme && (
                     <button
                       onClick={onToggleTheme}
-                      className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full font-mono text-[11px] font-bold uppercase tracking-wider border-2 transition-all shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 shrink-0 ${
+                      className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-full font-mono text-[11px] font-bold uppercase tracking-wider border-2 transition-all shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 shrink-0 ${
                         theme === 'dark'
                           ? 'bg-obsidian-900 text-lime border-lime hover:bg-obsidian-850 shadow-glow-lime'
                           : 'bg-white text-obsidian-950 border-obsidian-950 hover:bg-canvas-100'
@@ -1178,12 +1194,12 @@
                       {theme === 'dark' ? (
                         <>
                           <IconSun className="w-3.5 h-3.5 text-lime animate-spin-slow shrink-0" />
-                          <span className="text-lime font-black">CYBER DARK</span>
+                          <span className="text-lime font-black hidden xs:inline sm:inline">CYBER</span>
                         </>
                       ) : (
                         <>
                           <IconMoon className="w-3.5 h-3.5 text-obsidian-950 shrink-0" />
-                          <span className="text-obsidian-950 font-black">LIGHT</span>
+                          <span className="text-obsidian-950 font-black hidden xs:inline sm:inline">LIGHT</span>
                         </>
                       )}
                     </button>
@@ -1193,11 +1209,12 @@
                   {onOpenCredits && (
                     <button
                       onClick={onOpenCredits}
-                      className="group inline-flex items-center gap-1.5 px-3 py-1.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 transition-all shrink-0 cursor-pointer"
+                      className="group inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 transition-all shrink-0 cursor-pointer"
                       title="Meet the Creators: Muhammed Shadil & Muhammed Sawad"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-obsidian-950 animate-ping shrink-0"></span>
-                      <span>MEET THE TEAM</span>
+                      <span className="hidden sm:inline">MEET THE TEAM</span>
+                      <span className="sm:hidden text-[11px]">CREATORS</span>
                     </button>
                   )}
 
@@ -1315,13 +1332,14 @@
         }, []);
 
         return (
-          <div className="w-full bg-obsidian-950 text-white border-b-2 border-lime/40 py-2.5 px-4 overflow-hidden relative z-30 select-none shadow-md">
-            <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="w-full max-w-full bg-obsidian-950 text-white border-b-2 border-lime/40 py-2.5 px-2.5 sm:px-4 overflow-hidden relative z-30 select-none shadow-md">
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4">
               {/* Live Status Indicator Pill */}
-              <div className="flex items-center gap-2 shrink-0 bg-lime/10 border border-lime/30 px-3 py-1 rounded-full">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 bg-lime/10 border border-lime/30 px-2 sm:px-3 py-1 rounded-full">
                 <span className="w-2 h-2 rounded-full bg-lime animate-ping"></span>
-                <span className="font-mono text-[11px] font-black text-lime uppercase tracking-widest flex items-center gap-1.5">
-                  <span>● LIVE CLIMATE TELEMETRY</span>
+                <span className="font-mono text-[10px] sm:text-[11px] font-black text-lime uppercase tracking-wider sm:tracking-widest flex items-center gap-1.5">
+                  <span className="hidden sm:inline">● LIVE CLIMATE TELEMETRY</span>
+                  <span className="sm:hidden">● TELEMETRY</span>
                 </span>
               </div>
 
@@ -1449,7 +1467,7 @@
                       <span>✦ A CIRCULAR MATERIALS & RE-ENGINEERING PLATFORM</span>
                     </div>
 
-                    <h1 className="font-editorial-condensed text-5xl sm:text-7xl lg:text-[5.4rem] font-black tracking-tight leading-[0.88] uppercase text-obsidian-950">
+                    <h1 className="font-editorial-condensed text-3xl sm:text-6xl md:text-7xl lg:text-[5.4rem] font-black tracking-tight leading-[0.92] uppercase text-obsidian-950 break-words">
                       RE-ENGINEERING <br />
                       <span className="text-cobalt">TOMORROW'S</span> <br />
                       WASTE<span className="text-lime">*</span> TODAY.
@@ -1462,7 +1480,7 @@
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2">
                       <button
                         onClick={() => onNavigate('scanner')}
-                        className="group flex items-center justify-center gap-3 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black px-6 sm:px-7 py-3.5 sm:py-4 rounded-full text-sm sm:text-base tracking-wider uppercase border-2 border-obsidian-950 shadow-brutal transition-all hover:translate-x-0.5 hover:-translate-y-0.5"
+                        className="group flex items-center justify-center gap-3 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black px-5 sm:px-7 py-3.5 sm:py-4 rounded-full text-xs sm:text-base tracking-wider uppercase border-2 border-obsidian-950 shadow-brutal transition-all hover:translate-x-0.5 hover:-translate-y-0.5 w-full sm:w-auto"
                       >
                         <span>TRY AI SNAP-SORT</span>
                         <div className="w-6 h-6 rounded-full bg-obsidian-950 text-lime flex items-center justify-center group-hover:rotate-45 transition-transform duration-300 shrink-0">
@@ -1472,7 +1490,7 @@
 
                       <button
                         onClick={() => onNavigate('community')}
-                        className="group flex items-center justify-center gap-2.5 bg-obsidian-950 hover:bg-obsidian-800 text-white font-editorial-condensed font-black px-6 sm:px-7 py-3.5 sm:py-4 rounded-full text-sm sm:text-base tracking-wider uppercase border-2 border-obsidian-950 shadow-brutal transition-all hover:translate-x-0.5 hover:-translate-y-0.5"
+                        className="group flex items-center justify-center gap-2.5 bg-obsidian-950 hover:bg-obsidian-800 text-white font-editorial-condensed font-black px-5 sm:px-7 py-3.5 sm:py-4 rounded-full text-xs sm:text-base tracking-wider uppercase border-2 border-obsidian-950 shadow-brutal transition-all hover:translate-x-0.5 hover:-translate-y-0.5 w-full sm:w-auto"
                       >
                         <span>EXPLORE UPCYCLING</span>
                         <IconArrowUpRight className="w-4 h-4 text-lime group-hover:rotate-45 transition-transform duration-300 shrink-0" />
@@ -1559,7 +1577,7 @@
             {/* LIVE IMPACT COUNTERS */}
             <section className="border-b-2 border-obsidian-950 bg-white">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                   {stats.map((stat, idx) => (
                     <div 
                       key={idx}
@@ -1885,19 +1903,19 @@
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   
                   {/* DEVELOPER 1: MUHAMMED SHADIL */}
-                  <div className="border-2 border-white/20 bg-obsidian-900/90 p-6 sm:p-8 rounded-sm shadow-brutal-lime flex flex-col justify-between">
+                  <div className="border-2 border-white/20 bg-obsidian-900/90 p-4 sm:p-7 md:p-8 rounded-sm shadow-brutal-lime flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-6">
-                        <span className="inline-flex items-center gap-1.5 bg-lime px-3 py-0.5 text-obsidian-950 font-mono text-[10px] font-black uppercase rounded-xs">
+                      <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-5">
+                        <span className="inline-flex items-center gap-1.5 bg-lime px-2.5 py-0.5 text-obsidian-950 font-mono text-[10px] font-black uppercase rounded-xs">
                           <span>✦ LEAD DEVELOPER & CREATOR</span>
                         </span>
                         <span className="font-mono text-[10px] text-white/50">#01 // LEAD</span>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 sm:gap-6 items-center sm:items-start">
                         <div className="sm:col-span-5 flex justify-center">
-                          <div className="relative group w-full max-w-[190px]">
-                            <div className="absolute inset-0 bg-lime translate-x-2.5 translate-y-2.5 border-2 border-obsidian-950 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
+                          <div className="relative group w-36 sm:w-full max-w-[170px] sm:max-w-[190px] mx-auto">
+                            <div className="absolute inset-0 bg-lime translate-x-2 translate-y-2 border-2 border-obsidian-950 transition-transform group-hover:translate-x-2.5 group-hover:translate-y-2.5"></div>
                             <div className="relative bg-obsidian-950 border-2 border-white/30 overflow-hidden aspect-[3/4] shadow-xl">
                               <img
                                 src="./developer.jpg"
@@ -1911,9 +1929,9 @@
                           </div>
                         </div>
 
-                        <div className="sm:col-span-7 space-y-3">
+                        <div className="sm:col-span-7 space-y-2.5 sm:space-y-3 text-center sm:text-left">
                           <div>
-                            <h3 className="font-editorial-condensed text-2xl sm:text-3xl font-black uppercase text-white leading-tight">
+                            <h3 className="font-editorial-condensed text-xl sm:text-2xl md:text-3xl font-black uppercase text-white leading-tight">
                               MUHAMMED <br />
                               <span className="text-lime">SHADIL</span>
                             </h3>
@@ -1926,7 +1944,7 @@
                             Conceived and built the core architecture, ViT neural classification pipeline, and gamified circular ecosystem.
                           </p>
 
-                          <div className="flex flex-wrap gap-1 font-mono text-[9px] text-white/70 pt-1">
+                          <div className="flex flex-wrap gap-1 font-mono text-[9px] text-white/70 pt-1 justify-center sm:justify-start">
                             <span className="px-2 py-0.5 bg-obsidian-800 border border-white/10">Full-Stack Architect</span>
                             <span className="px-2 py-0.5 bg-obsidian-800 border border-white/10">UI/UX Editorial</span>
                           </div>
@@ -1934,12 +1952,12 @@
                       </div>
                     </div>
 
-                    <div className="pt-6 border-t border-white/10 mt-6 flex flex-wrap gap-2.5">
+                    <div className="pt-5 sm:pt-6 border-t border-white/10 mt-5 sm:mt-6 flex flex-col sm:flex-row gap-2.5">
                       <a
                         href="https://www.linkedin.com/in/muhammed-shadil-752181430/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-cobalt hover:bg-blue-600 text-white font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-white/20 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                        className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[42px] bg-cobalt hover:bg-blue-600 text-white font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-white/20 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                       >
                         <IconLinkedin className="w-3.5 h-3.5 fill-current" />
                         <span>LINKEDIN</span>
@@ -1950,7 +1968,7 @@
                         href="https://www.instagram.com/_.shaaaad?psln=Y3k2b2R3c2YwNmhz"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                        className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[42px] bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                       >
                         <IconInstagram className="w-3.5 h-3.5" />
                         <span>INSTAGRAM</span>
@@ -1960,19 +1978,19 @@
                   </div>
 
                   {/* DEVELOPER 2: MUHAMMED SAWAD */}
-                  <div className="border-2 border-white/20 bg-obsidian-900/90 p-6 sm:p-8 rounded-sm shadow-brutal-blue flex flex-col justify-between">
+                  <div className="border-2 border-white/20 bg-obsidian-900/90 p-4 sm:p-7 md:p-8 rounded-sm shadow-brutal-blue flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-6">
-                        <span className="inline-flex items-center gap-1.5 bg-obsidian-950 text-lime border border-lime/40 px-3 py-0.5 font-mono text-[10px] font-black uppercase rounded-xs">
+                      <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-5">
+                        <span className="inline-flex items-center gap-1.5 bg-obsidian-950 text-lime border border-lime/40 px-2.5 py-0.5 font-mono text-[10px] font-black uppercase rounded-xs">
                           <span>✦ CO-DEVELOPER & CONTRIBUTOR</span>
                         </span>
                         <span className="font-mono text-[10px] text-white/50">#02 // CO-DEV</span>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 sm:gap-6 items-center sm:items-start">
                         <div className="sm:col-span-5 flex justify-center">
-                          <div className="relative group w-full max-w-[190px]">
-                            <div className="absolute inset-0 bg-cobalt translate-x-2.5 translate-y-2.5 border-2 border-obsidian-950 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
+                          <div className="relative group w-36 sm:w-full max-w-[170px] sm:max-w-[190px] mx-auto">
+                            <div className="absolute inset-0 bg-cobalt translate-x-2 translate-y-2 border-2 border-obsidian-950 transition-transform group-hover:translate-x-2.5 group-hover:translate-y-2.5"></div>
                             <div className="relative bg-obsidian-950 border-2 border-white/30 overflow-hidden aspect-[3/4] shadow-xl">
                               <img
                                 src="./sawad.jpg"
@@ -1986,9 +2004,9 @@
                           </div>
                         </div>
 
-                        <div className="sm:col-span-7 space-y-3">
+                        <div className="sm:col-span-7 space-y-2.5 sm:space-y-3 text-center sm:text-left">
                           <div>
-                            <h3 className="font-editorial-condensed text-2xl sm:text-3xl font-black uppercase text-white leading-tight">
+                            <h3 className="font-editorial-condensed text-xl sm:text-2xl md:text-3xl font-black uppercase text-white leading-tight">
                               MUHAMMED <br />
                               <span className="text-cobalt-light">SAWAD</span>
                             </h3>
@@ -2001,7 +2019,7 @@
                             Collaborated on platform integration pipelines, community repository workflows, and feature enhancements.
                           </p>
 
-                          <div className="flex flex-wrap gap-1 font-mono text-[9px] text-white/70 pt-1">
+                          <div className="flex flex-wrap gap-1 font-mono text-[9px] text-white/70 pt-1 justify-center sm:justify-start">
                             <span className="px-2 py-0.5 bg-obsidian-800 border border-white/10">Feature Contributor</span>
                             <span className="px-2 py-0.5 bg-obsidian-800 border border-white/10">Community Module</span>
                           </div>
@@ -2009,12 +2027,12 @@
                       </div>
                     </div>
 
-                    <div className="pt-6 border-t border-white/10 mt-6">
+                    <div className="pt-5 sm:pt-6 border-t border-white/10 mt-5 sm:mt-6">
                       <a
                         href="https://www.instagram.com/muh_sa_v_ad?mdxt=NXA4aXNoYno2aDNr"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 bg-obsidian-950 hover:bg-lime text-lime hover:text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border-2 border-lime shadow-glow-lime hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                        className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 min-h-[42px] bg-obsidian-950 hover:bg-lime text-lime hover:text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border-2 border-lime shadow-glow-lime hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                       >
                         <IconInstagram className="w-3.5 h-3.5" />
                         <span>INSTAGRAM (@muh_sa_v_ad)</span>
@@ -2763,7 +2781,7 @@
               </div>
 
               {/* Interactive Vector Radar Map */}
-              <div className="relative w-full h-[480px] bg-obsidian-950 border-2 border-obsidian-950 overflow-hidden select-none rounded-sm">
+              <div className="relative w-full max-w-full h-[350px] sm:h-[480px] bg-obsidian-950 border-2 border-obsidian-950 overflow-hidden select-none rounded-sm">
                 <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full absolute inset-0 opacity-40 pointer-events-none">
                   <path d="M 0,40 Q 25,48 45,35 T 80,65 T 100,60 L 100,75 L 0,85 Z" fill="#0f1b2b" />
                   <line x1="0" y1="20" x2="100" y2="45" stroke="#333" strokeWidth="1" />
@@ -3980,44 +3998,44 @@
 
         return (
           <div
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-obsidian-950/85 backdrop-blur-md overflow-y-auto animate-backdrop-fade"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-obsidian-950/85 backdrop-blur-md overflow-y-auto animate-backdrop-fade"
             onClick={onClose}
           >
             <div
-              className="relative w-full max-w-5xl bg-canvas border-2 border-obsidian-950 shadow-2xl overflow-hidden my-6 animate-modal-pop"
+              className="relative w-full max-w-5xl bg-canvas border-2 border-obsidian-950 shadow-2xl overflow-hidden my-auto sm:my-6 animate-modal-pop max-h-[92vh] sm:max-h-[88vh] flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Top Editorial Bar */}
-              <div className="bg-obsidian-950 text-white px-6 py-4 flex items-center justify-between border-b-2 border-obsidian-950">
-                <div className="flex items-center gap-3">
-                  <span className="w-2.5 h-2.5 rounded-full bg-lime animate-pulse"></span>
-                  <span className="font-mono text-xs uppercase text-lime font-bold tracking-widest">
-                    // ENGINEERING DOSSIER • ROOT & REFUSE DEVELOPMENT TEAM
+              <div className="bg-obsidian-950 text-white px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between border-b-2 border-obsidian-950 shrink-0 gap-2">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-lime animate-pulse shrink-0"></span>
+                  <span className="font-mono text-[10px] sm:text-xs uppercase text-lime font-bold tracking-wider sm:tracking-widest truncate">
+                    // CREATORS DOSSIER • ROOT & REFUSE TEAM
                   </span>
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-8 h-8 rounded-xs bg-obsidian-900 border border-white/20 hover:border-lime hover:text-lime flex items-center justify-center transition-colors"
+                  className="w-8 h-8 min-w-[32px] rounded-xs bg-obsidian-900 border border-white/20 hover:border-lime hover:text-lime flex items-center justify-center transition-colors shrink-0"
                 >
                   <IconX className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Filter Tabs */}
-              <div className="bg-canvas-100 px-6 py-3 border-b-2 border-obsidian-950 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2 font-mono text-xs">
-                  <span className="text-obsidian-900/60 font-bold uppercase mr-1">SHOWCASE:</span>
+              <div className="bg-canvas-100 px-3 sm:px-6 py-2.5 sm:py-3 border-b-2 border-obsidian-950 flex items-center justify-between gap-2 overflow-x-auto shrink-0">
+                <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-[11px] sm:text-xs whitespace-nowrap">
+                  <span className="text-obsidian-900/60 font-bold uppercase mr-1 hidden sm:inline">SHOWCASE:</span>
                   <button
                     onClick={() => setActiveTab('all')}
-                    className={`px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
+                    className={`px-2.5 sm:px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
                       activeTab === 'all' ? 'bg-obsidian-950 text-lime' : 'bg-canvas-200 text-obsidian-900 hover:bg-canvas-300'
                     }`}
                   >
-                    ALL CREATORS (2)
+                    ALL (2)
                   </button>
                   <button
                     onClick={() => setActiveTab('shadil')}
-                    className={`px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
+                    className={`px-2.5 sm:px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
                       activeTab === 'shadil' ? 'bg-obsidian-950 text-lime' : 'bg-canvas-200 text-obsidian-900 hover:bg-canvas-300'
                     }`}
                   >
@@ -4025,7 +4043,7 @@
                   </button>
                   <button
                     onClick={() => setActiveTab('sawad')}
-                    className={`px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
+                    className={`px-2.5 sm:px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
                       activeTab === 'sawad' ? 'bg-obsidian-950 text-lime' : 'bg-canvas-200 text-obsidian-900 hover:bg-canvas-300'
                     }`}
                   >
@@ -4033,25 +4051,25 @@
                   </button>
                 </div>
 
-                <div className="font-mono text-[11px] text-obsidian-900/60">
+                <div className="font-mono text-[10px] sm:text-[11px] text-obsidian-900/60 whitespace-nowrap hidden md:block">
                   <span>OFFICIAL SUBMISSION CREDITS</span>
                 </div>
               </div>
 
               {/* Modal Body: Developers Showcase */}
-              <div className="p-6 sm:p-8 space-y-8 max-h-[78vh] overflow-y-auto">
+              <div className="p-3 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-y-auto flex-1">
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
 
                   {/* CARD 1: MUHAMMED SHADIL */}
                   {(activeTab === 'all' || activeTab === 'shadil') && (
-                    <div className={`p-6 sm:p-7 bg-white border-2 border-obsidian-950 shadow-brutal flex flex-col justify-between ${
+                    <div className={`p-4 sm:p-6 md:p-7 bg-white border-2 border-obsidian-950 shadow-brutal flex flex-col justify-between ${
                       activeTab === 'shadil' ? 'lg:col-span-2' : ''
                     }`}>
                       <div>
-                        <div className="flex items-center justify-between pb-4 border-b border-obsidian-900/10 mb-5">
-                          <span className="inline-flex items-center gap-1.5 bg-lime text-obsidian-950 font-mono text-[10px] font-black uppercase px-2.5 py-0.5 rounded-xs shadow-sm">
-                            <IconSparkles className="w-3 h-3" />
+                        <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-obsidian-900/10 mb-4 sm:mb-5 gap-2">
+                          <span className="inline-flex items-center gap-1.5 bg-lime text-obsidian-950 font-mono text-[9px] sm:text-[10px] font-black uppercase px-2 sm:px-2.5 py-0.5 rounded-xs shadow-sm">
+                            <IconSparkles className="w-3 h-3 shrink-0" />
                             <span>LEAD DEVELOPER & CREATOR</span>
                           </span>
                           <span className="font-mono text-[10px] text-obsidian-900/50 uppercase font-bold">
@@ -4059,10 +4077,10 @@
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-start">
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6 items-center sm:items-start">
                           <div className="sm:col-span-5 flex justify-center">
-                            <div className="relative group w-full max-w-[200px]">
-                              <div className="absolute inset-0 bg-lime translate-x-2.5 translate-y-2.5 border-2 border-obsidian-950 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
+                            <div className="relative group w-36 sm:w-full max-w-[170px] sm:max-w-[190px] md:max-w-[200px] mx-auto">
+                              <div className="absolute inset-0 bg-lime translate-x-2 translate-y-2 border-2 border-obsidian-950 transition-transform group-hover:translate-x-2.5 group-hover:translate-y-2.5"></div>
                               <div className="relative bg-obsidian-950 border-2 border-obsidian-950 overflow-hidden aspect-[3/4] shadow-md">
                                 <img
                                   src="./developer.jpg"
@@ -4079,9 +4097,9 @@
                             </div>
                           </div>
 
-                          <div className="sm:col-span-7 space-y-3">
+                          <div className="sm:col-span-7 space-y-2.5 sm:space-y-3 text-center sm:text-left">
                             <div>
-                              <h3 className="font-editorial-condensed text-2xl sm:text-3xl font-black uppercase text-obsidian-950 leading-tight">
+                              <h3 className="font-editorial-condensed text-xl sm:text-2xl md:text-3xl font-black uppercase text-obsidian-950 leading-tight">
                                 MUHAMMED <br />
                                 <span className="text-lime-dark">SHADIL</span>
                               </h3>
@@ -4094,7 +4112,7 @@
                               Architected and engineered Root & Refuse end-to-end, combining machine perception waste segregation with community circular blueprints and gamification logic.
                             </p>
 
-                            <div className="flex flex-wrap gap-1.5 font-mono text-[10px] pt-1">
+                            <div className="flex flex-wrap gap-1 sm:gap-1.5 font-mono text-[9px] sm:text-[10px] pt-1 justify-center sm:justify-start">
                               <span className="px-2 py-0.5 bg-canvas-200 border border-obsidian-900/10 font-bold">Full-Stack Architect</span>
                               <span className="px-2 py-0.5 bg-canvas-200 border border-obsidian-900/10 font-bold">UI/UX Editorial</span>
                               <span className="px-2 py-0.5 bg-canvas-200 border border-obsidian-900/10 font-bold">ViT Vision Model</span>
@@ -4103,12 +4121,12 @@
                         </div>
                       </div>
 
-                      <div className="pt-6 border-t border-obsidian-900/10 mt-6 flex flex-wrap gap-2.5">
+                      <div className="pt-4 sm:pt-6 border-t border-obsidian-900/10 mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-2.5">
                         <a
                           href="https://www.linkedin.com/in/muhammed-shadil-752181430/"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-cobalt hover:bg-cobalt-dark text-white font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                          className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[42px] bg-cobalt hover:bg-cobalt-dark text-white font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                         >
                           <IconLinkedin className="w-3.5 h-3.5 fill-current" />
                           <span>LINKEDIN</span>
@@ -4119,7 +4137,7 @@
                           href="https://www.instagram.com/_.shaaaad?psln=Y3k2b2R3c2YwNmhz"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                          className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[42px] bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                         >
                           <IconInstagram className="w-3.5 h-3.5" />
                           <span>INSTAGRAM</span>
@@ -4131,13 +4149,13 @@
 
                   {/* CARD 2: MUHAMMED SAWAD */}
                   {(activeTab === 'all' || activeTab === 'sawad') && (
-                    <div className={`p-6 sm:p-7 bg-white border-2 border-obsidian-950 shadow-brutal flex flex-col justify-between ${
+                    <div className={`p-4 sm:p-6 md:p-7 bg-white border-2 border-obsidian-950 shadow-brutal flex flex-col justify-between ${
                       activeTab === 'sawad' ? 'lg:col-span-2' : ''
                     }`}>
                       <div>
-                        <div className="flex items-center justify-between pb-4 border-b border-obsidian-900/10 mb-5">
-                          <span className="inline-flex items-center gap-1.5 bg-obsidian-950 text-lime font-mono text-[10px] font-black uppercase px-2.5 py-0.5 rounded-xs shadow-sm border border-lime/40">
-                            <IconCheckCircle className="w-3 h-3" />
+                        <div className="flex items-center justify-between pb-3 sm:pb-4 border-b border-obsidian-900/10 mb-4 sm:mb-5 gap-2">
+                          <span className="inline-flex items-center gap-1.5 bg-obsidian-950 text-lime font-mono text-[9px] sm:text-[10px] font-black uppercase px-2 sm:px-2.5 py-0.5 rounded-xs shadow-sm border border-lime/40">
+                            <IconCheckCircle className="w-3 h-3 shrink-0" />
                             <span>CO-DEVELOPER & CONTRIBUTOR</span>
                           </span>
                           <span className="font-mono text-[10px] text-obsidian-900/50 uppercase font-bold">
@@ -4145,10 +4163,10 @@
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-start">
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6 items-center sm:items-start">
                           <div className="sm:col-span-5 flex justify-center">
-                            <div className="relative group w-full max-w-[200px]">
-                              <div className="absolute inset-0 bg-cobalt translate-x-2.5 translate-y-2.5 border-2 border-obsidian-950 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
+                            <div className="relative group w-36 sm:w-full max-w-[170px] sm:max-w-[190px] md:max-w-[200px] mx-auto">
+                              <div className="absolute inset-0 bg-cobalt translate-x-2 translate-y-2 border-2 border-obsidian-950 transition-transform group-hover:translate-x-2.5 group-hover:translate-y-2.5"></div>
                               <div className="relative bg-obsidian-950 border-2 border-obsidian-950 overflow-hidden aspect-[3/4] shadow-md">
                                 <img
                                   src="./sawad.jpg"
@@ -4168,9 +4186,9 @@
                             </div>
                           </div>
 
-                          <div className="sm:col-span-7 space-y-3">
+                          <div className="sm:col-span-7 space-y-2.5 sm:space-y-3 text-center sm:text-left">
                             <div>
-                              <h3 className="font-editorial-condensed text-2xl sm:text-3xl font-black uppercase text-obsidian-950 leading-tight">
+                              <h3 className="font-editorial-condensed text-xl sm:text-2xl md:text-3xl font-black uppercase text-obsidian-950 leading-tight">
                                 MUHAMMED <br />
                                 <span className="text-cobalt">SAWAD</span>
                               </h3>
@@ -4183,7 +4201,7 @@
                               Contributed to core development pipelines, community DIY integration modules, feature enhancements, and system refinement for the Root & Refuse platform.
                             </p>
 
-                            <div className="flex flex-wrap gap-1.5 font-mono text-[10px] pt-1">
+                            <div className="flex flex-wrap gap-1 sm:gap-1.5 font-mono text-[9px] sm:text-[10px] pt-1 justify-center sm:justify-start">
                               <span className="px-2 py-0.5 bg-canvas-200 border border-obsidian-900/10 font-bold">Platform Contributor</span>
                               <span className="px-2 py-0.5 bg-canvas-200 border border-obsidian-900/10 font-bold">Community Module</span>
                               <span className="px-2 py-0.5 bg-canvas-200 border border-obsidian-900/10 font-bold">Feature Engineer</span>
@@ -4192,12 +4210,12 @@
                         </div>
                       </div>
 
-                      <div className="pt-6 border-t border-obsidian-900/10 mt-6 flex flex-wrap gap-2.5">
+                      <div className="pt-4 sm:pt-6 border-t border-obsidian-900/10 mt-4 sm:mt-6">
                         <a
                           href="https://www.instagram.com/muh_sa_v_ad?mdxt=NXA4aXNoYno2aDNr"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 bg-obsidian-950 hover:bg-lime text-lime hover:text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border-2 border-lime shadow-glow-lime hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                          className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 min-h-[42px] bg-obsidian-950 hover:bg-lime text-lime hover:text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border-2 border-lime shadow-glow-lime hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                         >
                           <IconInstagram className="w-4 h-4" />
                           <span>INSTAGRAM (@muh_sa_v_ad)</span>
@@ -4212,13 +4230,13 @@
               </div>
 
               {/* Modal Footer */}
-              <div className="bg-canvas-200 px-6 py-4 border-t-2 border-obsidian-950 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs">
+              <div className="bg-canvas-200 px-4 sm:px-6 py-3 sm:py-4 border-t-2 border-obsidian-950 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs shrink-0 text-center sm:text-left">
                 <span className="text-obsidian-900/60">
                   ROOT & REFUSE — ENGINEERED BY MUHAMMED SHADIL & MUHAMMED SAWAD
                 </span>
                 <button
                   onClick={onClose}
-                  className="px-5 py-2 bg-obsidian-950 text-white font-editorial-condensed font-black uppercase tracking-wider hover:bg-lime hover:text-obsidian-950 border border-obsidian-950 transition-colors"
+                  className="w-full sm:w-auto px-5 py-2.5 min-h-[40px] bg-obsidian-950 text-white font-editorial-condensed font-black uppercase tracking-wider hover:bg-lime hover:text-obsidian-950 border border-obsidian-950 transition-colors"
                 >
                   CLOSE DOSSIER
                 </button>
@@ -4296,7 +4314,7 @@
               </div>
 
               {/* 4-Column Directory Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-b border-white/10 font-mono text-xs text-white/70">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 py-10 border-b border-white/10 font-mono text-xs text-white/70">
                 <div>
                   <span className="text-lime font-bold block mb-3 uppercase tracking-wider">// PLATFORM</span>
                   <ul className="space-y-2">

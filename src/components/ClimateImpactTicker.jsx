@@ -25,13 +25,14 @@ export default function ClimateImpactTicker() {
   }, []);
 
   return (
-    <div className="w-full bg-obsidian-950 text-white border-b-2 border-lime/40 py-2.5 px-4 overflow-hidden relative z-30 select-none shadow-md">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+    <div className="w-full max-w-full bg-obsidian-950 text-white border-b-2 border-lime/40 py-2.5 px-2.5 sm:px-4 overflow-hidden relative z-30 select-none shadow-md">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4">
         {/* Live Status Indicator Pill */}
-        <div className="flex items-center gap-2 shrink-0 bg-lime/10 border border-lime/30 px-3 py-1 rounded-full">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 bg-lime/10 border border-lime/30 px-2 sm:px-3 py-1 rounded-full">
           <span className="w-2 h-2 rounded-full bg-lime animate-ping"></span>
-          <span className="font-mono text-[11px] font-black text-lime uppercase tracking-widest flex items-center gap-1.5">
-            <span>● LIVE CLIMATE TELEMETRY</span>
+          <span className="font-mono text-[10px] sm:text-[11px] font-black text-lime uppercase tracking-wider sm:tracking-widest flex items-center gap-1.5">
+            <span className="hidden sm:inline">● LIVE CLIMATE TELEMETRY</span>
+            <span className="sm:hidden">● TELEMETRY</span>
           </span>
         </div>
 

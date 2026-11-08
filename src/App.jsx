@@ -108,7 +108,7 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans selection:bg-lime selection:text-obsidian-950 transition-colors duration-300 ${
+    <div className={`min-h-screen flex flex-col font-sans selection:bg-lime selection:text-obsidian-950 transition-colors duration-300 w-full max-w-full overflow-x-hidden ${
       theme === 'dark' ? 'cyber-dark-theme bg-obsidian-950 text-white' : 'bg-canvas text-obsidian-950'
     }`}>
       {/* Luxury Editorial Agency Custom Mouse Follower */}
@@ -126,7 +126,7 @@ export default function App() {
       />
 
       {/* Main Multi-Page Screen Switcher */}
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-full overflow-x-hidden">
         {currentPage === 'home' && (
           <HomePage
             onNavigate={navigateTo}

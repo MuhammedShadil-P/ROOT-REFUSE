@@ -140,7 +140,7 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
             {onToggleTheme && (
               <button
                 onClick={onToggleTheme}
-                className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full font-mono text-[11px] font-bold uppercase tracking-wider border-2 transition-all shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 shrink-0 ${
+                className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-full font-mono text-[11px] font-bold uppercase tracking-wider border-2 transition-all shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 shrink-0 ${
                   theme === 'dark'
                     ? 'bg-obsidian-900 text-lime border-lime hover:bg-obsidian-850 shadow-glow-lime'
                     : 'bg-white text-obsidian-950 border-obsidian-950 hover:bg-canvas-100'
@@ -150,12 +150,12 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
                 {theme === 'dark' ? (
                   <>
                     <Sun className="w-3.5 h-3.5 text-lime animate-spin shrink-0" style={{ animationDuration: '20s' }} />
-                    <span className="text-lime font-black">CYBER DARK</span>
+                    <span className="text-lime font-black hidden xs:inline sm:inline">CYBER</span>
                   </>
                 ) : (
                   <>
                     <Moon className="w-3.5 h-3.5 text-obsidian-950 shrink-0" />
-                    <span className="text-obsidian-950 font-black">LIGHT</span>
+                    <span className="text-obsidian-950 font-black hidden xs:inline sm:inline">LIGHT</span>
                   </>
                 )}
               </button>
@@ -165,11 +165,12 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
             {onOpenCredits && (
               <button
                 onClick={onOpenCredits}
-                className="group inline-flex items-center gap-1.5 px-3 py-1.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 transition-all shrink-0 cursor-pointer"
+                className="group inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 transition-all shrink-0 cursor-pointer"
                 title="Meet the Creators: Muhammed Shadil & Muhammed Sawad"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-obsidian-950 animate-ping shrink-0"></span>
-                <span>MEET THE TEAM</span>
+                <span className="hidden sm:inline">MEET THE TEAM</span>
+                <span className="sm:hidden text-[11px]">CREATORS</span>
               </button>
             )}
 

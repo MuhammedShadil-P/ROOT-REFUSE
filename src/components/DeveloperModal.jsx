@@ -8,44 +8,44 @@ export default function DeveloperModal({ isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-obsidian-950/85 backdrop-blur-md overflow-y-auto animate-backdrop-fade"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-obsidian-950/85 backdrop-blur-md overflow-y-auto animate-backdrop-fade"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-5xl bg-canvas border-2 border-obsidian-950 shadow-2xl overflow-hidden my-6 animate-modal-pop"
+        className="relative w-full max-w-5xl bg-canvas border-2 border-obsidian-950 shadow-2xl overflow-hidden my-auto sm:my-6 animate-modal-pop max-h-[92vh] sm:max-h-[88vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Editorial Bar */}
-        <div className="bg-obsidian-950 text-white px-6 py-4 flex items-center justify-between border-b-2 border-obsidian-950">
-          <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-lime animate-pulse"></span>
-            <span className="font-mono text-xs uppercase text-lime font-bold tracking-widest">
-              // ENGINEERING DOSSIER • ROOT & REFUSE DEVELOPMENT TEAM
+        <div className="bg-obsidian-950 text-white px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between border-b-2 border-obsidian-950 shrink-0 gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <span className="w-2.5 h-2.5 rounded-full bg-lime animate-pulse shrink-0"></span>
+            <span className="font-mono text-[10px] sm:text-xs uppercase text-lime font-bold tracking-wider sm:tracking-widest truncate">
+              // CREATORS DOSSIER • ROOT & REFUSE TEAM
             </span>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-xs bg-obsidian-900 border border-white/20 hover:border-lime hover:text-lime flex items-center justify-center transition-colors"
+            className="w-8 h-8 min-w-[32px] rounded-xs bg-obsidian-900 border border-white/20 hover:border-lime hover:text-lime flex items-center justify-center transition-colors shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Controls / Filter Tabs */}
-        <div className="bg-canvas-100 px-6 py-3 border-b-2 border-obsidian-950 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 font-mono text-xs">
-            <span className="text-obsidian-900/60 font-bold uppercase mr-1">SHOWCASE:</span>
+        <div className="bg-canvas-100 px-3 sm:px-6 py-2.5 sm:py-3 border-b-2 border-obsidian-950 flex items-center justify-between gap-2 overflow-x-auto shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-[11px] sm:text-xs whitespace-nowrap">
+            <span className="text-obsidian-900/60 font-bold uppercase mr-1 hidden sm:inline">SHOWCASE:</span>
             <button
               onClick={() => setActiveTab('all')}
-              className={`px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
+              className={`px-2.5 sm:px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
                 activeTab === 'all' ? 'bg-obsidian-950 text-lime' : 'bg-canvas-200 text-obsidian-900 hover:bg-canvas-300'
               }`}
             >
-              ALL CREATORS (2)
+              ALL (2)
             </button>
             <button
               onClick={() => setActiveTab('shadil')}
-              className={`px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
+              className={`px-2.5 sm:px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
                 activeTab === 'shadil' ? 'bg-obsidian-950 text-lime' : 'bg-canvas-200 text-obsidian-900 hover:bg-canvas-300'
               }`}
             >
@@ -53,7 +53,7 @@ export default function DeveloperModal({ isOpen, onClose }) {
             </button>
             <button
               onClick={() => setActiveTab('sawad')}
-              className={`px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
+              className={`px-2.5 sm:px-3 py-1 uppercase font-bold rounded-xs transition-colors ${
                 activeTab === 'sawad' ? 'bg-obsidian-950 text-lime' : 'bg-canvas-200 text-obsidian-900 hover:bg-canvas-300'
               }`}
             >
@@ -61,21 +61,21 @@ export default function DeveloperModal({ isOpen, onClose }) {
             </button>
           </div>
 
-          <div className="font-mono text-[11px] text-obsidian-900/60">
+          <div className="font-mono text-[10px] sm:text-[11px] text-obsidian-900/60 whitespace-nowrap hidden md:block">
             <span>OFFICIAL SUBMISSION CREDITS</span>
           </div>
         </div>
 
         {/* Modal Body: Developers Showcase */}
-        <div className="p-6 sm:p-8 space-y-8 max-h-[80vh] overflow-y-auto">
+        <div className="p-3 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-y-auto flex-1">
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
 
             {/* ========================================================
                 CARD 1: MUHAMMED SHADIL (LEAD DEVELOPER & CREATOR)
                ======================================================== */}
             {(activeTab === 'all' || activeTab === 'shadil') && (
-              <div className={`p-6 sm:p-7 bg-white border-2 border-obsidian-950 shadow-brutal flex flex-col justify-between ${
+              <div className={`p-4 sm:p-6 md:p-7 bg-white border-2 border-obsidian-950 shadow-brutal flex flex-col justify-between ${
                 activeTab === 'shadil' ? 'lg:col-span-2' : ''
               }`}>
                 <div>
@@ -90,10 +90,10 @@ export default function DeveloperModal({ isOpen, onClose }) {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-start">
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6 items-center sm:items-start">
                     {/* Portrait Photo in Acid Lime Frame */}
                     <div className="sm:col-span-5 flex justify-center">
-                      <div className="relative group w-full max-w-[200px]">
+                      <div className="relative group w-36 sm:w-full max-w-[170px] sm:max-w-[190px] md:max-w-[200px] mx-auto">
                         <div className="absolute inset-0 bg-lime translate-x-2.5 translate-y-2.5 border-2 border-obsidian-950 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
                         <div className="relative bg-obsidian-950 border-2 border-obsidian-950 overflow-hidden aspect-[3/4] shadow-md">
                           <img
@@ -137,12 +137,12 @@ export default function DeveloperModal({ isOpen, onClose }) {
                 </div>
 
                 {/* Social Connect Buttons */}
-                <div className="pt-6 border-t border-obsidian-900/10 mt-6 flex flex-wrap gap-2.5">
+                <div className="pt-4 sm:pt-6 border-t border-obsidian-900/10 mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-2.5">
                   <a
                     href="https://www.linkedin.com/in/muhammed-shadil-752181430/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-cobalt hover:bg-cobalt-dark text-white font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                    className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[42px] bg-cobalt hover:bg-cobalt-dark text-white font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                   >
                     <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
                       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
@@ -157,7 +157,7 @@ export default function DeveloperModal({ isOpen, onClose }) {
                     href="https://www.instagram.com/_.shaaaad?psln=Y3k2b2R3c2YwNmhz"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                    className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[42px] bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                   >
                     <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
@@ -175,7 +175,7 @@ export default function DeveloperModal({ isOpen, onClose }) {
                 CARD 2: MUHAMMED SAWAD (CO-DEVELOPER & CONTRIBUTOR)
                ======================================================== */}
             {(activeTab === 'all' || activeTab === 'sawad') && (
-              <div className={`p-6 sm:p-7 bg-white border-2 border-obsidian-950 shadow-brutal flex flex-col justify-between ${
+              <div className={`p-4 sm:p-6 md:p-7 bg-white border-2 border-obsidian-950 shadow-brutal flex flex-col justify-between ${
                 activeTab === 'sawad' ? 'lg:col-span-2' : ''
               }`}>
                 <div>
@@ -190,10 +190,10 @@ export default function DeveloperModal({ isOpen, onClose }) {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-start">
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 sm:gap-6 items-center sm:items-start">
                     {/* Portrait Photo in Neon Acid-Green / Cobalt Frame */}
                     <div className="sm:col-span-5 flex justify-center">
-                      <div className="relative group w-full max-w-[200px]">
+                      <div className="relative group w-36 sm:w-full max-w-[170px] sm:max-w-[190px] md:max-w-[200px] mx-auto">
                         <div className="absolute inset-0 bg-cobalt translate-x-2.5 translate-y-2.5 border-2 border-obsidian-950 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
                         <div className="relative bg-obsidian-950 border-2 border-obsidian-950 overflow-hidden aspect-[3/4] shadow-md">
                           <img
@@ -245,7 +245,7 @@ export default function DeveloperModal({ isOpen, onClose }) {
                     href="https://www.instagram.com/muh_sa_v_ad?mdxt=NXA4aXNoYno2aDNr"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 bg-obsidian-950 hover:bg-lime text-lime hover:text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border-2 border-lime shadow-glow-lime hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                    className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 min-h-[42px] bg-obsidian-950 hover:bg-lime text-lime hover:text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border-2 border-lime shadow-glow-lime hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
@@ -264,13 +264,13 @@ export default function DeveloperModal({ isOpen, onClose }) {
         </div>
 
         {/* Modal Footer */}
-        <div className="bg-canvas-200 px-6 py-4 border-t-2 border-obsidian-950 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs">
+        <div className="bg-canvas-200 px-4 sm:px-6 py-3 sm:py-4 border-t-2 border-obsidian-950 flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs shrink-0 text-center sm:text-left">
           <span className="text-obsidian-900/60">
             ROOT & REFUSE — ENGINEERED BY MUHAMMED SHADIL & MUHAMMED SAWAD
           </span>
           <button
             onClick={onClose}
-            className="px-5 py-2 bg-obsidian-950 text-white font-editorial-condensed font-black uppercase tracking-wider hover:bg-lime hover:text-obsidian-950 border border-obsidian-950 transition-colors"
+            className="w-full sm:w-auto px-5 py-2.5 min-h-[40px] bg-obsidian-950 text-white font-editorial-condensed font-black uppercase tracking-wider hover:bg-lime hover:text-obsidian-950 border border-obsidian-950 transition-colors"
           >
             CLOSE DOSSIER
           </button>

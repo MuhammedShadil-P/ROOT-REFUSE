@@ -84,7 +84,7 @@ export default function HomePage({ onNavigate, onOpenTutorial, onOpenCredits }) 
               </div>
 
               {/* Massive Bold Headline */}
-              <h1 className="font-editorial-condensed text-5xl sm:text-7xl lg:text-[5.4rem] font-black tracking-tight leading-[0.88] uppercase text-obsidian-950">
+              <h1 className="font-editorial-condensed text-3xl sm:text-6xl md:text-7xl lg:text-[5.4rem] font-black tracking-tight leading-[0.92] uppercase text-obsidian-950 break-words">
                 RE-ENGINEERING <br />
                 <span className="text-cobalt">TOMORROW'S</span> <br />
                 WASTE<span className="text-lime">*</span> TODAY.
@@ -101,7 +101,7 @@ export default function HomePage({ onNavigate, onOpenTutorial, onOpenCredits }) 
                 {/* Primary Button: Try AI Snap-Sort */}
                 <button
                   onClick={() => onNavigate('scanner')}
-                  className="group flex items-center justify-center gap-3 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black px-6 sm:px-7 py-3.5 sm:py-4 rounded-full text-sm sm:text-base tracking-wider uppercase border-2 border-obsidian-950 shadow-brutal transition-all hover:translate-x-0.5 hover:-translate-y-0.5"
+                  className="group flex items-center justify-center gap-3 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black px-5 sm:px-7 py-3.5 sm:py-4 rounded-full text-xs sm:text-base tracking-wider uppercase border-2 border-obsidian-950 shadow-brutal transition-all hover:translate-x-0.5 hover:-translate-y-0.5 w-full sm:w-auto"
                 >
                   <span>TRY AI SNAP-SORT</span>
                   <div className="w-6 h-6 rounded-full bg-obsidian-950 text-lime flex items-center justify-center group-hover:rotate-45 transition-transform duration-300 shrink-0">
@@ -112,7 +112,7 @@ export default function HomePage({ onNavigate, onOpenTutorial, onOpenCredits }) 
                 {/* Secondary Button: Explore Upcycling */}
                 <button
                   onClick={() => onNavigate('community')}
-                  className="group flex items-center justify-center gap-2.5 bg-obsidian-950 hover:bg-obsidian-800 text-white font-editorial-condensed font-black px-6 sm:px-7 py-3.5 sm:py-4 rounded-full text-sm sm:text-base tracking-wider uppercase border-2 border-obsidian-950 shadow-brutal transition-all hover:translate-x-0.5 hover:-translate-y-0.5"
+                  className="group flex items-center justify-center gap-2.5 bg-obsidian-950 hover:bg-obsidian-800 text-white font-editorial-condensed font-black px-5 sm:px-7 py-3.5 sm:py-4 rounded-full text-xs sm:text-base tracking-wider uppercase border-2 border-obsidian-950 shadow-brutal transition-all hover:translate-x-0.5 hover:-translate-y-0.5 w-full sm:w-auto"
                 >
                   <span>EXPLORE UPCYCLING</span>
                   <ArrowRight className="w-4 h-4 text-lime group-hover:translate-x-1 transition-transform shrink-0" />
@@ -562,7 +562,7 @@ export default function HomePage({ onNavigate, onOpenTutorial, onOpenCredits }) 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* DEVELOPER 1: MUHAMMED SHADIL */}
-            <div className="border-2 border-white/20 bg-obsidian-900/90 p-6 sm:p-8 rounded-sm shadow-brutal-lime flex flex-col justify-between">
+            <div className="border-2 border-white/20 bg-obsidian-900/90 p-4 sm:p-7 md:p-8 rounded-sm shadow-brutal-lime flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-6">
                   <span className="inline-flex items-center gap-1.5 bg-lime px-3 py-0.5 text-obsidian-950 font-mono text-[10px] font-black uppercase rounded-xs">
@@ -573,7 +573,7 @@ export default function HomePage({ onNavigate, onOpenTutorial, onOpenCredits }) 
 
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
                   <div className="sm:col-span-5 flex justify-center">
-                    <div className="relative group w-full max-w-[190px]">
+                    <div className="relative group w-36 sm:w-full max-w-[170px] sm:max-w-[190px] mx-auto">
                       <div className="absolute inset-0 bg-lime translate-x-2.5 translate-y-2.5 border-2 border-obsidian-950 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
                       <div className="relative bg-obsidian-950 border-2 border-white/30 overflow-hidden aspect-[3/4] shadow-xl">
                         <img
@@ -611,12 +611,12 @@ export default function HomePage({ onNavigate, onOpenTutorial, onOpenCredits }) 
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-white/10 mt-6 flex flex-wrap gap-2.5">
+              <div className="pt-5 sm:pt-6 border-t border-white/10 mt-5 sm:mt-6 flex flex-col sm:flex-row gap-2.5">
                 <a
                   href="https://www.linkedin.com/in/muhammed-shadil-752181430/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-cobalt hover:bg-blue-600 text-white font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-white/20 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                  className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[42px] bg-cobalt hover:bg-blue-600 text-white font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-white/20 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                 >
                   <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
                     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
@@ -631,7 +631,7 @@ export default function HomePage({ onNavigate, onOpenTutorial, onOpenCredits }) 
                   href="https://www.instagram.com/_.shaaaad?psln=Y3k2b2R3c2YwNmhz"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                  className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2.5 min-h-[42px] bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
@@ -645,7 +645,7 @@ export default function HomePage({ onNavigate, onOpenTutorial, onOpenCredits }) 
             </div>
 
             {/* DEVELOPER 2: MUHAMMED SAWAD */}
-            <div className="border-2 border-white/20 bg-obsidian-900/90 p-6 sm:p-8 rounded-sm shadow-brutal-blue flex flex-col justify-between">
+            <div className="border-2 border-white/20 bg-obsidian-900/90 p-4 sm:p-7 md:p-8 rounded-sm shadow-brutal-blue flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-6">
                   <span className="inline-flex items-center gap-1.5 bg-obsidian-950 text-lime border border-lime/40 px-3 py-0.5 font-mono text-[10px] font-black uppercase rounded-xs">
@@ -656,7 +656,7 @@ export default function HomePage({ onNavigate, onOpenTutorial, onOpenCredits }) 
 
                 <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
                   <div className="sm:col-span-5 flex justify-center">
-                    <div className="relative group w-full max-w-[190px]">
+                    <div className="relative group w-36 sm:w-full max-w-[170px] sm:max-w-[190px] mx-auto">
                       <div className="absolute inset-0 bg-cobalt translate-x-2.5 translate-y-2.5 border-2 border-obsidian-950 transition-transform group-hover:translate-x-3 group-hover:translate-y-3"></div>
                       <div className="relative bg-obsidian-950 border-2 border-white/30 overflow-hidden aspect-[3/4] shadow-xl">
                         <img
@@ -699,7 +699,7 @@ export default function HomePage({ onNavigate, onOpenTutorial, onOpenCredits }) 
                   href="https://www.instagram.com/muh_sa_v_ad?mdxt=NXA4aXNoYno2aDNr"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 bg-obsidian-950 hover:bg-lime text-lime hover:text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border-2 border-lime shadow-glow-lime hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                  className="w-full inline-flex items-center justify-center gap-2.5 px-4 py-2.5 min-h-[42px] bg-obsidian-950 hover:bg-lime text-lime hover:text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border-2 border-lime shadow-glow-lime hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
                 >
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
