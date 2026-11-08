@@ -996,6 +996,9 @@
           <div className={`min-h-screen flex flex-col font-sans selection:bg-lime selection:text-obsidian-950 transition-colors duration-300 w-full max-w-full overflow-x-hidden ${
             theme === 'dark' ? 'cyber-dark-theme bg-obsidian-950 text-white' : 'bg-canvas text-obsidian-950'
           }`}>
+            {/* Subtle Interactive Particle Canvas Background (Feature 1) */}
+            <InteractiveParticleBackground theme={theme} />
+
             <CustomCursor />
 
             {/* Persistent Editorial Header with Gamification Avatar Shortcut & Theme Toggle */}
@@ -2139,6 +2142,46 @@
         );
       }
 
+      // AR Bounding Box Data Map
+      const AR_BOUNDING_BOXES = {
+        'pizza-box': [
+          { id: 'bb-1', label: 'SEGMENT 01: UNCONTAMINATED LID', desc: 'Virgin cellulose pulp with zero oil residue', conf: '99.2%', stream: 'BLUE PAPER RECYCLING BIN', color: '#CCFF00', top: 10, left: 12, width: 76, height: 38 },
+          { id: 'bb-2', label: 'SEGMENT 02: GREASE-SOAKED BASE', desc: 'Saturated lipid grease fibers & organic residue', conf: '98.7%', stream: 'GREEN COMPOST / BIO-DIGESTER', color: '#2563EB', top: 52, left: 14, width: 72, height: 38 }
+        ],
+        'clear-pet-bottle': [
+          { id: 'bb-1', label: 'VESSEL: PETE #1 POLYMER', desc: 'Ultra-clear Polyethylene Terephthalate vessel', conf: '99.8%', stream: 'MUNICIPAL PLASTIC RECYCLING', color: '#CCFF00', top: 16, left: 24, width: 52, height: 58 },
+          { id: 'bb-2', label: 'CLOSURE: HDPE #2 CAP & RING', desc: 'High-Density Polyethylene colored resin', conf: '97.4%', stream: 'SPECIALIZED CAP RECLAIM DIRECTORY', color: '#2563EB', top: 6, left: 36, width: 28, height: 12 }
+        ],
+        'lithium-batteries': [
+          { id: 'bb-1', label: 'HAZMAT: LITHIUM-ION CELLS', desc: 'Flammable cobalt-oxide & electrolyte matrix [CLASS 9]', conf: '99.4%', stream: 'CERTIFIED R2 HAZMAT DROP VAULT', color: '#FF0055', top: 12, left: 18, width: 64, height: 70 },
+          { id: 'bb-2', label: 'METALLURGY: NICKEL CONTACTS', desc: 'Precious alloy contact terminals', conf: '96.8%', stream: 'PYROMETALLURGICAL RECOVERY', color: '#CCFF00', top: 6, left: 28, width: 44, height: 14 }
+        ],
+        'disposable-coffee-cup': [
+          { id: 'bb-1', label: 'CLOSURE: POLYSTYRENE #6 LID', desc: 'Thermoformed rigid PS plastic sipping cap', conf: '98.5%', stream: 'SPECIALIZED CHEMICAL RECYCLER', color: '#CCFF00', top: 6, left: 22, width: 56, height: 16 },
+          { id: 'bb-2', label: 'SLEEVE: KRAFT PAPERBOARD', desc: '100% unbleached corrugated fiber', conf: '99.6%', stream: 'MUNICIPAL BLUE PAPER BIN', color: '#2563EB', top: 38, left: 20, width: 60, height: 28 },
+          { id: 'bb-3', label: 'LINER: POLY-COATED CUP BODY', desc: 'Cellulose fused with PE moisture barrier film', conf: '91.2%', stream: 'LANDFILL / TERRACYCLE ZERO WASTE', color: '#F97316', top: 22, left: 24, width: 52, height: 68 }
+        ]
+      };
+
+      const getARBoxes = (item) => {
+        if (!item) return [];
+        if (AR_BOUNDING_BOXES[item.id]) return AR_BOUNDING_BOXES[item.id];
+        return [
+          {
+            id: 'bb-def-1',
+            label: `PRIMARY: ${item.name.toUpperCase()}`,
+            desc: item.materialBreakdown || 'Primary recoverable composite matrix',
+            conf: '99.4%',
+            stream: item.binType || 'RECYCLING PROTOCOL',
+            color: '#CCFF00',
+            top: 14,
+            left: 14,
+            width: 72,
+            height: 70
+          }
+        ];
+      };
+
       // ==========================================
       // PAGE 2: SCANNER & WHERE DOES IT GO?
       // ==========================================
@@ -2152,6 +2195,8 @@
         const [scanStage, setScanStage] = useState('');
         const [previewImg, setPreviewImg] = useState(null);
         const [detectedItem, setDetectedItem] = useState(null);
+        const [arOverlayEnabled, setArOverlayEnabled] = useState(true);
+        const [selectedBoxId, setSelectedBoxId] = useState(null);
         const fileInputRef = useRef(null);
 
         const categories = [
@@ -2292,38 +2337,162 @@
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
                   {/* Left Dropzone */}
                   <div className="lg:col-span-7 flex flex-col">
-                    <div className="relative border-2 border-dashed border-obsidian-950/40 bg-canvas/40 hover:border-obsidian-950 transition-colors p-6 rounded-sm min-h-[300px] flex flex-col items-center justify-center text-center">
+                    {/* Simulated AR Scanner Viewport (Feature 2) */}
+                    <div className="relative border-2 border-obsidian-950 bg-obsidian-950 p-4 sm:p-5 rounded-sm min-h-[350px] sm:min-h-[400px] flex flex-col items-center justify-center text-center overflow-hidden shadow-inner">
+                      
+                      {/* Viewfinder AR Corner Overlays (BRVND Neon Style) */}
+                      <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-lime pointer-events-none z-20"></div>
+                      <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-lime pointer-events-none z-20"></div>
+                      <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-lime pointer-events-none z-20"></div>
+                      <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-lime pointer-events-none z-20"></div>
+
+                      {/* Viewport Micro HUD Bar */}
+                      <div className="absolute top-3 inset-x-4 flex items-center justify-between text-white font-mono text-[10px] z-20 px-2 sm:px-4">
+                        <span className="flex items-center gap-1.5 bg-obsidian-900/80 px-2 py-0.5 rounded border border-white/10 text-lime font-bold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse"></span>
+                          <span>AR OPTICAL HUD // 0.14mm</span>
+                        </span>
+
+                        {detectedItem && (
+                          <button
+                            onClick={() => setArOverlayEnabled(!arOverlayEnabled)}
+                            className="flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-obsidian-900/90 text-white hover:text-lime border border-white/20 hover:border-lime transition-all cursor-pointer select-none"
+                            title="Toggle AR Bounding Boxes Overlay"
+                          >
+                            <span className="font-bold">AR BOXES: {arOverlayEnabled ? 'ON' : 'OFF'}</span>
+                          </button>
+                        )}
+                      </div>
+
                       {previewImg ? (
-                        <div className="relative max-w-sm overflow-hidden rounded-sm border border-obsidian-950 shadow-md">
-                          <img src={previewImg} alt="Preview" className="w-full h-56 object-cover" />
-                          {isScanning && <div className="absolute inset-x-0 h-1 bg-lime shadow-[0_0_15px_#CCFF00] animate-scan z-10"></div>}
+                        <div className="relative w-full h-full flex flex-col items-center justify-center my-auto">
+                          <div className="relative w-full max-w-md aspect-[4/3] overflow-hidden rounded-sm border-2 border-white/20 shadow-2xl bg-black">
+                            <img
+                              src={previewImg}
+                              alt="Scan item preview"
+                              className="w-full h-full object-cover filter contrast-105"
+                            />
+
+                            {/* 1. Futuristic Sweeping Laser Beam */}
+                            {isScanning && (
+                              <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+                                <div className="absolute inset-x-0 h-1 bg-lime shadow-[0_0_20px_#CCFF00,0_0_35px_#CCFF00] animate-scan"></div>
+                                <div className="absolute inset-0 bg-lime/10 animate-pulse"></div>
+
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                  <div className="w-20 h-20 border-2 border-lime/80 rounded-full flex items-center justify-center animate-spin-slow">
+                                    <div className="w-14 h-14 border border-white/30 rounded-full"></div>
+                                    <div className="w-2 h-2 bg-lime rounded-full shadow-[0_0_10px_#CCFF00]"></div>
+                                  </div>
+                                </div>
+
+                                <div className="absolute bottom-3 left-3 bg-obsidian-950/90 border border-lime text-lime px-2 py-1 font-mono text-[9px] uppercase font-bold tracking-wider">
+                                  <span>SCANNING TENSOR SPECTRUM...</span>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* 2. Interactive Bounding-Box Mock Results */}
+                            {!isScanning && detectedItem && arOverlayEnabled && (
+                              <div className="absolute inset-0 pointer-events-auto z-20">
+                                {getARBoxes(detectedItem).map(box => {
+                                  const isSelected = selectedBoxId === box.id;
+
+                                  return (
+                                    <div
+                                      key={box.id}
+                                      onClick={() => setSelectedBoxId(isSelected ? null : box.id)}
+                                      className={`absolute border-2 transition-all cursor-pointer group ${
+                                        isSelected
+                                          ? 'border-lime ring-2 ring-lime/50 bg-lime/20 shadow-glow-lime'
+                                          : 'border-lime/80 hover:border-lime bg-lime/10 hover:bg-lime/15'
+                                      }`}
+                                      style={{
+                                        top: `${box.top}%`,
+                                        left: `${box.left}%`,
+                                        width: `${box.width}%`,
+                                        height: `${box.height}%`,
+                                      }}
+                                    >
+                                      <span className="absolute -top-1 -left-1 w-2 h-2 bg-lime"></span>
+                                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-lime"></span>
+                                      <span className="absolute -bottom-1 -left-1 w-2 h-2 bg-lime"></span>
+                                      <span className="absolute -bottom-1 -right-1 w-2 h-2 bg-lime"></span>
+
+                                      <div className="absolute -top-5 left-0 bg-obsidian-950 text-lime px-1.5 py-0.5 font-mono text-[9px] font-black uppercase tracking-wider border border-lime shadow-sm whitespace-nowrap flex items-center gap-1">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse"></span>
+                                        <span>{box.label}</span>
+                                        <span className="text-white">[{box.conf}]</span>
+                                      </div>
+
+                                      {isSelected && (
+                                        <div className="absolute top-full left-0 mt-2 z-30 bg-obsidian-950 text-white border border-lime p-2.5 rounded-xs shadow-2xl font-mono text-[10px] w-56 sm:w-60 text-left animate-fadeIn">
+                                          <div className="text-lime font-black uppercase text-[11px] pb-1 border-b border-white/10 flex items-center justify-between">
+                                            <span>{box.label}</span>
+                                            <span className="text-white">{box.conf}</span>
+                                          </div>
+                                          <p className="text-white/80 mt-1 font-sans text-[11px] leading-tight">
+                                            {box.desc}
+                                          </p>
+                                          <div className="mt-2 pt-1 border-t border-white/10 text-lime font-bold text-[10px]">
+                                            TARGET: {box.stream}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            <div className="absolute bottom-2 inset-x-2 flex items-center justify-between text-white/50 font-mono text-[9px] pointer-events-none z-10 px-2">
+                              <span>X: 420.4 Y: 118.2</span>
+                              <span>TENSOR ViT 2.0</span>
+                              <span>CONF: 99.1%</span>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 flex flex-wrap gap-2.5 justify-center z-20">
+                            <button
+                              onClick={() => fileInputRef.current?.click()}
+                              className="px-3.5 py-1.5 bg-obsidian-900 border border-white/20 text-white font-mono text-xs uppercase font-bold hover:border-lime hover:text-lime transition-colors"
+                            >
+                              CHANGE IMAGE
+                            </button>
+                            <button
+                              onClick={() => runAnalysis(previewImg, detectedItem)}
+                              className="px-3.5 py-1.5 bg-lime text-obsidian-950 font-mono text-xs uppercase font-black hover:bg-lime-bright transition-colors flex items-center gap-1.5 shadow-sm"
+                            >
+                              <span>RE-TRIGGER SCAN</span>
+                            </button>
+                          </div>
                         </div>
                       ) : (
-                        <div className="space-y-4">
-                          <div className="w-16 h-16 mx-auto rounded-full bg-obsidian-950 text-lime flex items-center justify-center shadow-brutal-sm">
+                        <div className="space-y-4 my-auto">
+                          <div className="w-16 h-16 mx-auto rounded-full bg-obsidian-900 text-lime border border-lime/40 flex items-center justify-center shadow-glow-lime">
                             <IconUpload className="w-7 h-7" />
                           </div>
                           <div>
-                            <h4 className="font-editorial-condensed text-xl uppercase font-black text-obsidian-950">
-                              UPLOAD OR SELECT AN ITEM
+                            <h4 className="font-editorial-condensed text-xl uppercase font-black text-white">
+                              DRAG & DROP OBJECT PHOTO
                             </h4>
-                            <p className="font-mono text-xs text-obsidian-900/60 max-w-sm mx-auto mt-1">
-                              Instant AI edge breakdown for packaging, plastics, and e-waste.
+                            <p className="font-mono text-xs text-white/60 max-w-sm mx-auto mt-1">
+                              Supports JPEG, PNG, WebP. Instant multi-spectrum laser breakdown for packaging, plastics, and e-waste.
                             </p>
                           </div>
                           <div className="flex gap-2 justify-center">
                             <button
                               onClick={() => fileInputRef.current?.click()}
-                              className="px-4 py-2 bg-obsidian-950 text-white font-editorial-condensed font-black text-xs uppercase tracking-wider hover:bg-cobalt transition-colors flex items-center gap-1.5"
+                              className="px-4 py-2 bg-white text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider hover:bg-lime transition-colors flex items-center gap-1.5"
                             >
                               <IconUpload className="w-3.5 h-3.5" />
                               <span>UPLOAD PHOTO</span>
                             </button>
                             <button
                               onClick={() => handleSample(WASTE_ITEMS[0])}
-                              className="px-4 py-2 bg-lime text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider hover:bg-lime-bright transition-colors"
+                              className="px-4 py-2 bg-lime text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider hover:bg-lime-bright transition-colors shadow-glow-lime"
                             >
-                              SIMULATE SCAN
+                              TEST AR SCANNER
                             </button>
                           </div>
                         </div>
@@ -2591,6 +2760,9 @@
             </section>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 space-y-8">
+
+              {/* LIVE COMMUNITY ACTIVITY FEED (Feature 3) */}
+              <CommunityActivityFeed onRewardPoints={(pts) => onRewardPoints && onRewardPoints(pts)} />
               <div className="bg-white border-2 border-obsidian-950 p-4 shadow-brutal-sm space-y-4">
                 <div className="relative">
                   <IconSearch className="w-4 h-4 text-obsidian-900/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -2687,6 +2859,301 @@
               onClose={() => setSubmitOpen(false)}
               onSubmit={handleNewBlueprint}
             />
+          </div>
+        );
+      }
+
+      // ==========================================
+      // LIVE COMMUNITY ACTIVITY FEED & PULSE TICKER (Feature 3)
+      // ==========================================
+      const INITIAL_COMMUNITY_ACTIVITIES = [
+        {
+          id: 'act-01',
+          user: 'Sarah Jenkins',
+          avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80',
+          role: 'Compost Cadet',
+          action: 'Diverted 3.4 kg PET bottles into micro-filament spools',
+          type: 'scan',
+          typeLabel: 'OPTICAL SORT',
+          badge: '+50 PTS',
+          time: '2m ago',
+          kudos: 14,
+          district: 'Sector 04 // West MRF'
+        },
+        {
+          id: 'act-02',
+          user: 'Devon Miller',
+          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+          role: 'Upcycle Wizard',
+          action: 'Published CAD blueprint: "HDPE Acoustic Wall Sconce"',
+          type: 'diy',
+          typeLabel: 'DIY BLUEPRINT',
+          badge: '+150 PTS',
+          time: '6m ago',
+          kudos: 29,
+          district: 'Maker Lab 02'
+        },
+        {
+          id: 'act-03',
+          user: 'Aisha Patel',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+          role: 'Terra Guardian',
+          action: 'Reported Civic Hazard: Overflowing e-waste depot on 5th Ave',
+          type: 'report',
+          typeLabel: 'CIVIC ALERT',
+          badge: '+75 PTS',
+          time: '12m ago',
+          kudos: 38,
+          district: 'Downtown Core'
+        },
+        {
+          id: 'act-04',
+          user: 'Marco Rossi',
+          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
+          role: 'Seedling Scout',
+          action: 'Separated greasy pizza box lid from compostable cellulose base',
+          type: 'scan',
+          typeLabel: 'OPTICAL SORT',
+          badge: '+50 PTS',
+          time: '18m ago',
+          kudos: 8,
+          district: 'Sector 07 // North'
+        },
+        {
+          id: 'act-05',
+          user: 'Elena Vance',
+          avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80',
+          role: 'Upcycle Wizard',
+          action: 'Upcycled 4 deadstock denim jackets into sound-dampening panels',
+          type: 'diy',
+          typeLabel: 'DIY BLUEPRINT',
+          badge: '+150 PTS',
+          time: '24m ago',
+          kudos: 42,
+          district: 'Textile Hub 01'
+        }
+      ];
+
+      const POOL_ACTIVITIES = [
+        {
+          user: 'Liam Thorne',
+          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80',
+          role: 'Circular Architect',
+          action: 'Scanned 12v Lithium battery array for R2 metallurgy vault extraction',
+          type: 'scan',
+          typeLabel: 'OPTICAL SORT',
+          badge: '+50 PTS',
+          district: 'E-Waste Corridor'
+        },
+        {
+          user: 'Maya Lin',
+          avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80',
+          role: 'Compost Cadet',
+          action: 'Added community drop-off point: "Green Thumb Bio-Tumbler #09"',
+          type: 'report',
+          typeLabel: 'FACILITY ADD',
+          badge: '+100 PTS',
+          district: 'Urban Farm Sector'
+        },
+        {
+          user: 'Kenji Sato',
+          avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=150&q=80',
+          role: 'Terra Guardian',
+          action: 'Melted 48 HDPE milk jug lids into marbled skate deck core',
+          type: 'diy',
+          typeLabel: 'DIY BLUEPRINT',
+          badge: '+150 PTS',
+          district: 'Community Workshop'
+        }
+      ];
+
+      function CommunityActivityFeed({ onRewardPoints }) {
+        const [activities, setActivities] = useState(INITIAL_COMMUNITY_ACTIVITIES);
+        const [filter, setFilter] = useState('all');
+        const [kudosState, setKudosState] = useState({});
+        const [kudosFeedbackToast, setKudosFeedbackToast] = useState(null);
+
+        useEffect(() => {
+          let poolIndex = 0;
+          const interval = setInterval(() => {
+            const nextAct = POOL_ACTIVITIES[poolIndex % POOL_ACTIVITIES.length];
+            poolIndex++;
+
+            const newEntry = {
+              ...nextAct,
+              id: `act-${Date.now()}`,
+              time: 'Just now',
+              kudos: Math.floor(Math.random() * 6) + 1,
+              isNew: true
+            };
+
+            setActivities(prev => [newEntry, ...prev.slice(0, 11)]);
+          }, 14000);
+
+          return () => clearInterval(interval);
+        }, []);
+
+        const handleSendKudos = (e, act) => {
+          e.stopPropagation();
+          const current = kudosState[act.id] || { count: act.kudos, sent: false };
+          if (current.sent) return;
+
+          try {
+            if (window.confetti) {
+              const rect = e.currentTarget.getBoundingClientRect();
+              window.confetti({
+                particleCount: 22,
+                spread: 45,
+                origin: {
+                  x: (rect.left + rect.width / 2) / window.innerWidth,
+                  y: (rect.top + rect.height / 2) / window.innerHeight
+                },
+                colors: ['#CCFF00', '#2563EB', '#0B0B0B'],
+                disableForReducedMotion: true
+              });
+            }
+          } catch (err) {}
+
+          setKudosState(prev => ({
+            ...prev,
+            [act.id]: { count: current.count + 1, sent: true }
+          }));
+
+          if (onRewardPoints) onRewardPoints(2);
+
+          setKudosFeedbackToast(`👏 Kudos delivered to ${act.user}! (+2 Eco-Credits)`);
+          setTimeout(() => setKudosFeedbackToast(null), 3000);
+        };
+
+        const filtered = activities.filter(act => filter === 'all' || act.type === filter);
+
+        return (
+          <div className="bg-white border-2 border-obsidian-950 shadow-brutal p-5 sm:p-7 rounded-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b-2 border-obsidian-950 gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-lime animate-ping"></div>
+                <div>
+                  <h3 className="font-editorial-condensed text-xl sm:text-2xl font-black uppercase text-obsidian-950 tracking-tight leading-none">
+                    LIVE CIVIC ACTIVITY FEED
+                  </h3>
+                  <span className="font-mono text-[10px] text-obsidian-900/60 uppercase">
+                    Global Decentralized Recovery Ledger • Real-Time Stream
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 font-mono text-[11px] whitespace-nowrap">
+                {[
+                  { id: 'all', label: 'ALL ACTIONS' },
+                  { id: 'scan', label: 'OPTICAL SCANS' },
+                  { id: 'diy', label: 'BLUEPRINTS' },
+                  { id: 'report', label: 'CIVIC ALERTS' },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setFilter(tab.id)}
+                    className={`px-2.5 py-1 uppercase font-bold rounded-xs transition-colors ${
+                      filter === tab.id
+                        ? 'bg-obsidian-950 text-lime'
+                        : 'bg-canvas-200 text-obsidian-900/70 hover:bg-canvas-300'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {kudosFeedbackToast && (
+              <div className="bg-lime text-obsidian-950 px-3.5 py-2 border border-obsidian-950 rounded-xs font-mono text-xs font-bold animate-fadeIn flex items-center justify-between">
+                <span>{kudosFeedbackToast}</span>
+                <span className="font-black">★ +2 PTS</span>
+              </div>
+            )}
+
+            <div className="divide-y divide-obsidian-900/10 max-h-[460px] overflow-y-auto pr-1 space-y-1">
+              {filtered.map(act => {
+                const currentKudos = kudosState[act.id] || { count: act.kudos, sent: false };
+
+                return (
+                  <div
+                    key={act.id}
+                    className={`pt-3 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group hover:bg-canvas-50 p-2.5 rounded-xs transition-colors ${
+                      act.isNew ? 'animate-fadeIn bg-lime/10' : ''
+                    }`}
+                  >
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className="relative shrink-0">
+                        <img
+                          src={act.avatar}
+                          alt={act.user}
+                          className="w-10 h-10 rounded-full object-cover border-2 border-obsidian-950"
+                        />
+                        <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-lime rounded-full border border-obsidian-950 flex items-center justify-center text-[8px] font-black font-mono">
+                          ✦
+                        </span>
+                      </div>
+
+                      <div className="space-y-0.5 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <strong className="font-editorial-condensed text-sm uppercase text-obsidian-950 tracking-tight">
+                            {act.user}
+                          </strong>
+                          <span className="font-mono text-[9px] text-cobalt font-bold bg-cobalt/10 px-1.5 py-0.2 rounded-xs uppercase">
+                            {act.role}
+                          </span>
+                          <span className="font-mono text-[9px] text-obsidian-900/50">
+                            {act.time}
+                          </span>
+                        </div>
+
+                        <p className="font-sans text-xs text-obsidian-900/80 leading-snug">
+                          {act.action}
+                        </p>
+
+                        <div className="flex items-center gap-2 font-mono text-[10px] text-obsidian-900/60 pt-0.5">
+                          <span className="text-lime-dark font-bold">{act.typeLabel}</span>
+                          <span>•</span>
+                          <span>{act.district}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 self-end sm:self-center shrink-0">
+                      <span className="font-mono text-[10px] bg-canvas-200 border border-obsidian-900/10 text-obsidian-950 px-2 py-0.5 rounded-xs font-black">
+                        {act.badge}
+                      </span>
+
+                      <button
+                        onClick={(e) => handleSendKudos(e, act)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs font-black uppercase tracking-wider border transition-all ${
+                          currentKudos.sent
+                            ? 'bg-lime text-obsidian-950 border-obsidian-950 shadow-sm cursor-default'
+                            : 'bg-white hover:bg-canvas-100 text-obsidian-950 border-obsidian-950 hover:border-lime shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5'
+                        }`}
+                        title="Deliver community kudos (+2 Eco-Credits)"
+                      >
+                        <span className="text-sm">{currentKudos.sent ? '✓' : '👏'}</span>
+                        <span>{currentKudos.sent ? 'KUDOS SENT' : 'KUDOS'}</span>
+                        <span className="px-1.5 py-0.2 bg-obsidian-950 text-white rounded-full text-[10px]">
+                          {currentKudos.count}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="bg-canvas-100 p-3 border border-obsidian-900/10 rounded-xs flex flex-col sm:flex-row items-center justify-between font-mono text-[11px] text-obsidian-900/60 gap-2">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>LEDGER CONNECTED: 1,420 VERIFIED DIVERSIONS TODAY</span>
+              </span>
+              <span className="text-obsidian-950 font-bold">
+                INTERACTIVE KUDOS ENABLES +2 CIVIC CREDITS
+              </span>
+            </div>
           </div>
         );
       }
@@ -4280,6 +4747,141 @@
 
             </div>
           </div>
+        );
+      }
+
+      // ==========================================
+      // INTERACTIVE PARTICLE CANVAS BACKGROUND (Feature 1)
+      // ==========================================
+      function InteractiveParticleBackground({ theme = 'light' }) {
+        const canvasRef = useRef(null);
+
+        useEffect(() => {
+          const canvas = canvasRef.current;
+          if (!canvas) return;
+
+          const ctx = canvas.getContext('2d');
+          let animationFrameId;
+          let width = (canvas.width = window.innerWidth);
+          let height = (canvas.height = window.innerHeight);
+
+          const handleResize = () => {
+            if (!canvas) return;
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+          };
+
+          window.addEventListener('resize', handleResize);
+
+          const mouse = { x: null, y: null, radius: 130 };
+
+          const handleMouseMove = (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+          };
+
+          const handleMouseLeave = () => {
+            mouse.x = null;
+            mouse.y = null;
+          };
+
+          window.addEventListener('mousemove', handleMouseMove);
+          window.addEventListener('mouseleave', handleMouseLeave);
+
+          const particleCount = Math.min(50, Math.floor((width * height) / 22000));
+          const particles = [];
+          const isDark = theme === 'dark';
+          const primaryColor = isDark ? '204, 255, 0' : '40, 60, 20';
+
+          for (let i = 0; i < particleCount; i++) {
+            particles.push({
+              x: Math.random() * width,
+              y: Math.random() * height,
+              vx: (Math.random() - 0.5) * 0.45,
+              vy: (Math.random() - 0.5) * 0.45,
+              radius: Math.random() * 2 + 1.2,
+              alpha: Math.random() * 0.35 + 0.15,
+              pulse: Math.random() * Math.PI
+            });
+          }
+
+          const render = () => {
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = 0; i < particles.length; i++) {
+              const p = particles[i];
+              p.x += p.vx;
+              p.y += p.vy;
+              p.pulse += 0.02;
+
+              if (p.x < 0) p.x = width;
+              if (p.x > width) p.x = 0;
+              if (p.y < 0) p.y = height;
+              if (p.y > height) p.y = 0;
+
+              if (mouse.x !== null && mouse.y !== null) {
+                const dx = mouse.x - p.x;
+                const dy = mouse.y - p.y;
+                const distance = Math.hypot(dx, dy);
+
+                if (distance < mouse.radius) {
+                  const force = (mouse.radius - distance) / mouse.radius;
+                  p.x -= (dx / distance) * force * 1.5;
+                  p.y -= (dy / distance) * force * 1.5;
+
+                  const lineAlpha = (1 - distance / mouse.radius) * 0.35;
+                  ctx.beginPath();
+                  ctx.moveTo(p.x, p.y);
+                  ctx.lineTo(mouse.x, mouse.y);
+                  ctx.strokeStyle = `rgba(204, 255, 0, ${lineAlpha})`;
+                  ctx.lineWidth = 0.8;
+                  ctx.stroke();
+                }
+              }
+
+              const currentRadius = p.radius + Math.sin(p.pulse) * 0.4;
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, Math.max(0.8, currentRadius), 0, Math.PI * 2);
+              ctx.fillStyle = isDark
+                ? `rgba(204, 255, 0, ${p.alpha})`
+                : `rgba(11, 11, 11, ${p.alpha * 0.5})`;
+              ctx.fill();
+
+              for (let j = i + 1; j < particles.length; j++) {
+                const p2 = particles[j];
+                const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                const maxDist = 95;
+
+                if (dist < maxDist) {
+                  const edgeAlpha = (1 - dist / maxDist) * (isDark ? 0.2 : 0.08);
+                  ctx.beginPath();
+                  ctx.moveTo(p.x, p.y);
+                  ctx.lineTo(p2.x, p2.y);
+                  ctx.strokeStyle = `rgba(${primaryColor}, ${edgeAlpha})`;
+                  ctx.lineWidth = 0.6;
+                  ctx.stroke();
+                }
+              }
+            }
+
+            animationFrameId = requestAnimationFrame(render);
+          };
+
+          render();
+
+          return () => {
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseleave', handleMouseLeave);
+            cancelAnimationFrame(animationFrameId);
+          };
+        }, [theme]);
+
+        return (
+          <canvas
+            ref={canvasRef}
+            className="fixed inset-0 pointer-events-none z-0 opacity-80"
+          />
         );
       }
 

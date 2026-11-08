@@ -7,6 +7,7 @@ import QuickSearchModal from './components/QuickSearchModal';
 import TutorialDetailModal from './components/TutorialDetailModal';
 import DeveloperModal from './components/DeveloperModal';
 import EcoCatch from './components/EcoCatch';
+import InteractiveParticleBackground from './components/InteractiveParticleBackground';
 import HomePage from './pages/HomePage';
 import ScannerPage from './pages/ScannerPage';
 import CommunityPage from './pages/CommunityPage';
@@ -115,6 +116,9 @@ export default function App() {
     <div className={`min-h-screen flex flex-col font-sans selection:bg-lime selection:text-obsidian-950 transition-colors duration-300 w-full max-w-full overflow-x-hidden ${
       theme === 'dark' ? 'cyber-dark-theme bg-obsidian-950 text-white' : 'bg-canvas text-obsidian-950'
     }`}>
+      {/* Subtle Interactive Particle Canvas Background */}
+      <InteractiveParticleBackground theme={theme} />
+
       {/* Luxury Editorial Agency Custom Mouse Follower */}
       <CustomCursor />
 

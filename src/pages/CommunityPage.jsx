@@ -3,6 +3,7 @@ import { Sparkles, Plus, Search, Filter, Heart, Clock, Scale, ArrowUpRight, Chec
 import { INITIAL_TUTORIALS } from '../data/tutorialsData';
 import SubmitGuideModal from '../components/SubmitGuideModal';
 import TutorialDetailModal from '../components/TutorialDetailModal';
+import CommunityActivityFeed from '../components/CommunityActivityFeed';
 
 export default function CommunityPage({ onOpenTutorial, onRewardPoints }) {
   const [tutorials, setTutorials] = useState(INITIAL_TUTORIALS);
@@ -103,6 +104,9 @@ export default function CommunityPage({ onOpenTutorial, onRewardPoints }) {
 
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 space-y-8">
+
+        {/* LIVE COMMUNITY ACTIVITY FEED (Feature 3) */}
+        <CommunityActivityFeed onRewardPoints={onRewardPoints} />
         
         {/* Filter Tabs and Search Bar */}
         <div className="bg-white border-2 border-obsidian-950 p-4 sm:p-5 shadow-brutal-sm space-y-4">
