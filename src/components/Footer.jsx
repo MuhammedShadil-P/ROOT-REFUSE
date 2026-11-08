@@ -40,8 +40,10 @@ export default function Footer({ onNavigate, onOpenCredits, ecoCatchEnabled = tr
                   <button
                     onClick={onOpenCredits}
                     className="px-6 py-3.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs sm:text-sm uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal hover:translate-x-0.5 hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+                    title="Meet the Creators: Muhammed Shadil & Muhammed Sawad"
                   >
-                    <span>✦ MEET THE TEAM</span>
+                    <span className="w-2 h-2 rounded-full bg-obsidian-950 animate-ping"></span>
+                    <span>✦ CREATORS: MEET THE TEAM</span>
                     <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
                   </button>
                 </div>

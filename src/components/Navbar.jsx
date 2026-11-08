@@ -152,16 +152,16 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
               </button>
             )}
 
-            {/* 2. Creators / Meet the Team Button (Tablet & PC) */}
+            {/* 2. Dedicated Creators / Meet the Team Button (Mobile & Desktop) */}
             {onOpenCredits && (
               <button
                 onClick={onOpenCredits}
-                className="hidden sm:inline-flex items-center gap-1 sm:gap-1.5 px-2 md:px-3 py-1 md:py-1.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-[10px] md:text-xs uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 transition-all shrink-0 cursor-pointer"
+                className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 md:px-3 md:py-1.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-[11px] md:text-xs uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal-xs md:shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 transition-all shrink-0 cursor-pointer"
                 title="Meet the Creators: Muhammed Shadil & Muhammed Sawad"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-obsidian-950 animate-ping shrink-0"></span>
-                <span className="hidden md:inline">MEET THE TEAM</span>
-                <span className="md:hidden text-[11px]">CREATORS</span>
+                <span className="hidden sm:inline">MEET THE TEAM</span>
+                <span className="sm:hidden font-black">CREATORS</span>
               </button>
             )}
 
@@ -174,9 +174,9 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
               <Search className="w-4 h-4" />
             </button>
 
-            {/* 4. Compact Profile / Upcycle Wizard Photo Avatar with Dropdown (PC & Mobile) */}
+            {/* 4. Compact Profile / Upcycle Wizard Photo Avatar with Dropdown (Desktop Only) */}
             {userProfile && (
-              <div className="relative shrink-0" ref={dropdownRef}>
+              <div className="hidden md:block relative shrink-0" ref={dropdownRef}>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -309,33 +309,7 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
             </span>
           </button>
           
-          {/* Mobile Profile Badge Card */}
-          {userProfile && (
-            <div 
-              onClick={() => handleNavClick('profile')}
-              className="p-3 bg-white border border-obsidian-950 rounded-sm flex items-center justify-between cursor-pointer mb-2 shadow-brutal-sm"
-            >
-              <div className="flex items-center gap-3">
-                <img
-                  src={userProfile.avatar}
-                  alt={userProfile.name}
-                  className="w-10 h-10 rounded-full object-cover border border-obsidian-950"
-                />
-                <div>
-                  <h5 className="font-editorial-condensed text-sm font-black uppercase text-obsidian-950">
-                    {userProfile.name}
-                  </h5>
-                  <span className="font-mono text-xs text-cobalt font-bold">
-                    {rankName}
-                  </span>
-                </div>
-              </div>
 
-              <span className="px-2.5 py-1 bg-lime text-obsidian-950 font-mono text-xs font-black rounded-xs">
-                ★ {userProfile.credits} PTS
-              </span>
-            </div>
-          )}
 
           {/* Mobile Theme Toggle Button */}
           {onToggleTheme && (
