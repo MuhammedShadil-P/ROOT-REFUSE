@@ -412,6 +412,12 @@
         </svg>
       );
 
+      const IconMenu = ({ className = "w-5 h-5" }) => (
+        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      );
+
       const IconLayers = ({ className = "w-4 h-4" }) => (
         <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" />
@@ -1230,6 +1236,20 @@
       // ==========================================
       function Navbar({ currentPage, onNavigate, onOpenSearch, userProfile, onOpenCredits, theme, onToggleTheme }) {
         const [mobileOpen, setMobileOpen] = useState(false);
+        const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+        const dropdownRef = useRef(null);
+
+        useEffect(() => {
+          const handleClickOutside = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+              setProfileDropdownOpen(false);
+            }
+          };
+          if (profileDropdownOpen) {
+            window.addEventListener('click', handleClickOutside);
+          }
+          return () => window.removeEventListener('click', handleClickOutside);
+        }, [profileDropdownOpen]);
 
         const links = [
           { id: 'home', label: 'HOME' },
@@ -1272,82 +1292,60 @@
             </div>
 
             {/* Main Agency Bar */}
-            <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-              <div className="flex items-center justify-between h-16 md:h-20">
+            <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16 md:h-20 gap-2 sm:gap-4 lg:gap-8 w-full max-w-full">
                 
-                {/* Logo */}
-                <div 
-                  onClick={() => onNavigate('home')}
-                  className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group select-none shrink-0"
-                >
-                  <div className="w-8 h-8 md:w-10 md:h-10 bg-obsidian-900 text-lime flex items-center justify-center font-editorial-condensed text-xl md:text-2xl font-black rounded-sm group-hover:bg-lime group-hover:text-obsidian-950 transition-colors shadow-brutal-sm shrink-0">
-                    *
+                {/* Left: Logo & Desktop Navigation Container with guaranteed flex gaps */}
+                <div className="flex items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 xl:gap-10 shrink-0">
+                  {/* Logo */}
+                  <div 
+                    onClick={() => onNavigate('home')}
+                    className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group select-none shrink-0"
+                  >
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-obsidian-900 text-lime flex items-center justify-center font-editorial-condensed text-xl md:text-2xl font-black rounded-sm group-hover:bg-lime group-hover:text-obsidian-950 transition-colors shadow-brutal-sm shrink-0">
+                      *
+                    </div>
+                    <div className="flex flex-col shrink-0">
+                      <span className="font-editorial-condensed text-base sm:text-lg md:text-2xl font-black tracking-tight leading-none text-obsidian-950 whitespace-nowrap">
+                        ROOT <span className="text-cobalt">&</span> REFUSE
+                      </span>
+                      <span className="font-mono text-[7.5px] sm:text-[8px] md:text-[9px] tracking-wider sm:tracking-widest text-obsidian-900/60 uppercase font-semibold hidden xs:block">
+                        Circular Materials Agency
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col shrink-0">
-                    <span className="font-editorial-condensed text-lg md:text-2xl font-black tracking-tight leading-none text-obsidian-950 whitespace-nowrap">
-                      ROOT <span className="text-cobalt">&</span> REFUSE
-                    </span>
-                    <span className="font-mono text-[8px] md:text-[9px] tracking-wider sm:tracking-widest text-obsidian-900/60 uppercase font-semibold">
-                      Circular Materials Agency
-                    </span>
-                  </div>
+
+                  {/* Desktop Nav Items */}
+                  <nav className="hidden md:flex items-center gap-1 lg:gap-2 shrink-0">
+                    {links.map((link) => {
+                      const isActive = currentPage === link.id;
+                      return (
+                        <button
+                          key={link.id}
+                          onClick={() => onNavigate(link.id)}
+                          className={`relative px-3 lg:px-4 py-2 font-mono text-xs tracking-wider uppercase font-bold transition-all flex items-center gap-1.5 lg:gap-2 rounded-xs shrink-0 ${
+                            isActive 
+                              ? 'bg-obsidian-900 text-white shadow-brutal-sm' 
+                              : 'text-obsidian-900 hover:bg-obsidian-900/5'
+                          }`}
+                        >
+                          <span>{link.label}</span>
+                          {link.badge && (
+                            <span className="text-[9px] bg-lime text-obsidian-950 px-1.5 py-0.2 rounded font-black font-mono">
+                              {link.badge}
+                            </span>
+                          )}
+                          {isActive && <span className="w-1.5 h-1.5 rounded-full bg-lime ml-0.5"></span>}
+                        </button>
+                      );
+                    })}
+                  </nav>
                 </div>
 
-                {/* Desktop Nav Items */}
-                <nav className="hidden md:flex items-center gap-2">
-                  {links.map((link) => {
-                    const isActive = currentPage === link.id;
-                    return (
-                      <button
-                        key={link.id}
-                        onClick={() => onNavigate(link.id)}
-                        className={`relative px-4 py-2 font-mono text-xs tracking-wider uppercase font-bold transition-all flex items-center gap-2 rounded-xs ${
-                          isActive 
-                            ? 'bg-obsidian-900 text-white shadow-brutal-sm' 
-                            : 'text-obsidian-900 hover:bg-obsidian-900/5'
-                        }`}
-                      >
-                        <span>{link.label}</span>
-                        {link.badge && (
-                          <span className="text-[9px] bg-lime text-obsidian-950 px-1.5 py-0.2 rounded font-black font-mono">
-                            {link.badge}
-                          </span>
-                        )}
-                        {isActive && <span className="w-1.5 h-1.5 rounded-full bg-lime ml-0.5"></span>}
-                      </button>
-                    );
-                  })}
-                </nav>
-
-                {/* Right Actions with TOP NAVIGATION USER BADGE & THEME TOGGLE */}
-                <div className="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3 flex-nowrap shrink-0">
+                {/* Right Actions */}
+                <div className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 lg:gap-3 flex-nowrap shrink-0">
                   
-                  {/* Gamification User Profile Badge Shortcut */}
-                  {userProfile && (
-                    <div
-                      onClick={() => onNavigate('profile')}
-                      className="group hidden lg:flex items-center gap-2 px-2.5 py-1.5 bg-white hover:bg-canvas-100 border border-obsidian-950 rounded-full cursor-pointer shadow-brutal-sm transition-all hover:translate-x-0.5 hover:-translate-y-0.5 shrink-0"
-                      title="View Profile & Badge Progression"
-                    >
-                      <div className="w-6 h-6 rounded-full overflow-hidden border border-obsidian-950 shrink-0">
-                        <img
-                          src={userProfile.avatar}
-                          alt={userProfile.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                        />
-                      </div>
-                      <div className="flex flex-col text-left leading-none pr-1">
-                        <span className="font-editorial-condensed text-[10px] font-black text-obsidian-950 group-hover:text-cobalt uppercase tracking-tight">
-                          {rankName}
-                        </span>
-                        <span className="font-mono text-[9px] text-obsidian-900/60 font-semibold mt-0.5">
-                          ★ {userProfile.credits.toLocaleString()} PTS
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Clean, Non-Wrapping Theme Toggle Button */}
+                  {/* 1. Theme Toggle Button */}
                   {onToggleTheme && (
                     <button
                       onClick={onToggleTheme}
@@ -1372,11 +1370,11 @@
                     </button>
                   )}
 
-                  {/* Dedicated Creators / Meet the Team Button */}
+                  {/* 2. Creators / Meet the Team Button (Tablet & PC) */}
                   {onOpenCredits && (
                     <button
                       onClick={onOpenCredits}
-                      className="group inline-flex items-center gap-1 sm:gap-1.5 px-2 md:px-3 py-1 md:py-1.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-[10px] md:text-xs uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 transition-all shrink-0 cursor-pointer"
+                      className="hidden sm:inline-flex items-center gap-1 sm:gap-1.5 px-2 md:px-3 py-1 md:py-1.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-[10px] md:text-xs uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 transition-all shrink-0 cursor-pointer"
                       title="Meet the Creators: Muhammed Shadil & Muhammed Sawad"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-obsidian-950 animate-ping shrink-0"></span>
@@ -1385,7 +1383,7 @@
                     </button>
                   )}
 
-                  {/* Quick Search Button (Desktop & Tablet only - relocated to mobile drawer for clean mobile header) */}
+                  {/* 3. Quick Search Button (Desktop Only) */}
                   <button
                     onClick={onOpenSearch}
                     className="hidden md:flex p-2.5 rounded-sm border border-obsidian-900/20 text-obsidian-900 hover:border-obsidian-950 hover:bg-white transition-colors shrink-0"
@@ -1394,7 +1392,99 @@
                     <IconSearch className="w-4 h-4" />
                   </button>
 
-                  {/* Snap-Sort Pill Button */}
+                  {/* 4. Compact Profile / Upcycle Wizard Photo Avatar with Dropdown (PC & Mobile) */}
+                  {userProfile && (
+                    <div className="relative shrink-0" ref={dropdownRef}>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setProfileDropdownOpen(prev => !prev);
+                        }}
+                        className="relative w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden border-2 border-obsidian-950 ring-2 ring-lime/40 hover:ring-lime hover:scale-105 active:scale-95 transition-all shadow-brutal-sm cursor-pointer shrink-0 flex items-center justify-center bg-obsidian-950"
+                        title={`Alex Sterling // ${rankName} - Click for Dossier`}
+                      >
+                        <img
+                          src={userProfile.avatar}
+                          alt={userProfile.name}
+                          className="w-full h-full object-cover"
+                        />
+                        <span className="absolute bottom-0 right-0 w-2 h-2 md:w-2.5 md:h-2.5 bg-lime rounded-full border border-obsidian-950"></span>
+                      </button>
+
+                      {/* Profile Dropdown Popover Card */}
+                      {profileDropdownOpen && (
+                        <div
+                          className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white border-2 border-obsidian-950 shadow-brutal p-4 rounded-sm z-50 animate-modal-pop text-obsidian-950"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="flex items-center justify-between pb-3 border-b border-obsidian-900/10 mb-3">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-obsidian-950 shrink-0">
+                                <img src={userProfile.avatar} alt={userProfile.name} className="w-full h-full object-cover" />
+                              </div>
+                              <div>
+                                <h4 className="font-editorial-condensed text-sm font-black uppercase text-obsidian-950 leading-none">
+                                  {userProfile.name}
+                                </h4>
+                                <span className="font-mono text-[10px] text-obsidian-900/60 block mt-0.5">
+                                  {userProfile.handle || '@alex_reclaims'}
+                                </span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => setProfileDropdownOpen(false)}
+                              className="w-6 h-6 rounded-xs bg-canvas-200 border border-obsidian-900/20 hover:border-obsidian-950 flex items-center justify-center text-obsidian-900"
+                            >
+                              <IconX className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          <div className="p-2.5 bg-obsidian-950 text-white rounded-xs mb-3 flex items-center justify-between">
+                            <div>
+                              <span className="font-mono text-[9px] text-lime font-bold uppercase block">CIVIC RANK:</span>
+                              <span className="font-editorial-condensed text-xs font-black uppercase tracking-wider text-lime">
+                                {rankName}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <span className="font-mono text-[9px] text-white/50 uppercase block">BALANCE:</span>
+                              <span className="font-mono text-xs font-black text-white">
+                                ★ {userProfile.credits.toLocaleString()} PTS
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-1.5 p-2 bg-canvas-100 border border-obsidian-900/10 rounded-xs mb-3 text-center font-mono">
+                            <div>
+                              <span className="text-[8px] text-obsidian-900/60 block uppercase">SORTED</span>
+                              <strong className="text-xs text-obsidian-950">{userProfile.itemsSorted || 142}</strong>
+                            </div>
+                            <div>
+                              <span className="text-[8px] text-obsidian-900/60 block uppercase">DIVERTED</span>
+                              <strong className="text-xs text-cobalt">{userProfile.wasteDivertedKg || 58.4}kg</strong>
+                            </div>
+                            <div>
+                              <span className="text-[8px] text-obsidian-900/60 block uppercase">CO2 SAVED</span>
+                              <strong className="text-xs text-emerald-600">{userProfile.co2SavedKg || 192.6}kg</strong>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              onNavigate('profile');
+                            }}
+                            className="w-full py-2 px-3 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-xs border border-obsidian-950 shadow-brutal-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                          >
+                            <span>VIEW FULL PROFILE DOSSIER</span>
+                            <IconArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 5. Snap-Sort Action Pill (Desktop Only) */}
                   <button
                     onClick={() => onNavigate('scanner')}
                     className="hidden md:inline-flex items-center gap-2 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black px-4 py-2 rounded-full text-xs tracking-wider uppercase border border-obsidian-950 shadow-brutal-sm transition-all hover:translate-x-0.5 hover:-translate-y-0.5 shrink-0"
@@ -1405,12 +1495,13 @@
                     </div>
                   </button>
 
-                  {/* Mobile Menu Toggle */}
+                  {/* 6. Mobile Hamburger Menu Toggle */}
                   <button
                     onClick={() => setMobileOpen(!mobileOpen)}
-                    className="md:hidden p-1.5 sm:p-2 text-obsidian-950 hover:bg-obsidian-900/10 rounded-sm shrink-0 flex items-center justify-center min-w-[36px]"
+                    className="md:hidden p-1.5 text-obsidian-950 hover:bg-obsidian-900/10 rounded-sm shrink-0 flex items-center justify-center min-w-[34px] w-8 h-8"
+                    title="Toggle Menu"
                   >
-                    {mobileOpen ? <IconX className="w-6 h-6" /> : <div className="space-y-1.5 w-6"><div className="h-0.5 bg-black"></div><div className="h-0.5 bg-black"></div><div className="h-0.5 bg-black"></div></div>}
+                    {mobileOpen ? <IconX className="w-6 h-6" /> : <IconMenu className="w-6 h-6" />}
                   </button>
                 </div>
 
