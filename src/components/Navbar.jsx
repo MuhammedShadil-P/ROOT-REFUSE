@@ -58,22 +58,22 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
       </div>
 
       {/* Main Agency Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           
           {/* Logo with BRVND style asterisk */}
           <div 
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-2.5 cursor-pointer group select-none"
+            className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group select-none min-w-0"
           >
-            <div className="w-10 h-10 bg-obsidian-900 text-lime flex items-center justify-center font-editorial-condensed text-2xl font-black rounded-sm group-hover:bg-lime group-hover:text-obsidian-950 transition-colors shadow-brutal-sm">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-obsidian-900 text-lime flex items-center justify-center font-editorial-condensed text-xl sm:text-2xl font-black rounded-sm group-hover:bg-lime group-hover:text-obsidian-950 transition-colors shadow-brutal-sm shrink-0">
               *
             </div>
-            <div className="flex flex-col">
-              <span className="font-editorial-condensed text-xl sm:text-2xl font-black tracking-tight leading-none text-obsidian-950">
+            <div className="flex flex-col min-w-0">
+              <span className="font-editorial-condensed text-lg sm:text-2xl font-black tracking-tight leading-none text-obsidian-950 truncate">
                 ROOT <span className="text-cobalt">&</span> REFUSE
               </span>
-              <span className="font-mono text-[9px] tracking-widest text-obsidian-900/60 uppercase font-semibold">
+              <span className="font-mono text-[8px] sm:text-[9px] tracking-wider sm:tracking-widest text-obsidian-900/60 uppercase font-semibold truncate hidden xs:block">
                 Circular Materials Agency
               </span>
             </div>
@@ -108,7 +108,7 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
           </nav>
 
           {/* Right Action Buttons with GAMIFICATION USER BADGE & THEME TOGGLE */}
-          <div className="flex items-center gap-2 sm:gap-2.5 lg:gap-3 flex-nowrap shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3 flex-nowrap shrink-0">
             
             {/* User Gamification Profile Shortcut Badge (Click to open /profile) */}
             {userProfile && (
@@ -140,7 +140,7 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
             {onToggleTheme && (
               <button
                 onClick={onToggleTheme}
-                className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-full font-mono text-[11px] font-bold uppercase tracking-wider border-2 transition-all shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 shrink-0 ${
+                className={`inline-flex items-center justify-center gap-1 sm:gap-1.5 p-1.5 sm:px-3 sm:py-1.5 rounded-full font-mono text-[11px] font-bold uppercase tracking-wider border-2 transition-all shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 shrink-0 min-w-[32px] ${
                   theme === 'dark'
                     ? 'bg-obsidian-900 text-lime border-lime hover:bg-obsidian-850 shadow-glow-lime'
                     : 'bg-white text-obsidian-950 border-obsidian-950 hover:bg-canvas-100'
@@ -165,7 +165,7 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
             {onOpenCredits && (
               <button
                 onClick={onOpenCredits}
-                className="group inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-xs uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 transition-all shrink-0 cursor-pointer"
+                className="group inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-lime hover:bg-lime-bright text-obsidian-950 font-editorial-condensed font-black text-[10px] sm:text-xs uppercase tracking-wider rounded-full border-2 border-obsidian-950 shadow-brutal-sm hover:translate-x-0.5 hover:-translate-y-0.5 transition-all shrink-0 cursor-pointer"
                 title="Meet the Creators: Muhammed Shadil & Muhammed Sawad"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-obsidian-950 animate-ping shrink-0"></span>
@@ -174,10 +174,10 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
               </button>
             )}
 
-            {/* Quick Search Button */}
+            {/* Quick Search Button (Desktop & Tablet only - relocated to mobile slide-out menu) */}
             <button
               onClick={onOpenSearch}
-              className="p-2 sm:p-2.5 rounded-sm border border-obsidian-900/20 text-obsidian-900 hover:border-obsidian-950 hover:bg-white transition-colors shrink-0"
+              className="hidden sm:flex p-2 sm:p-2.5 rounded-sm border border-obsidian-900/20 text-obsidian-900 hover:border-obsidian-950 hover:bg-white transition-colors shrink-0"
               title="Quick Search (Ctrl + K)"
             >
               <Search className="w-4 h-4" />
@@ -197,7 +197,7 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-obsidian-950 hover:bg-obsidian-900/10 rounded-sm shrink-0"
+              className="md:hidden p-1.5 sm:p-2 text-obsidian-950 hover:bg-obsidian-900/10 rounded-sm shrink-0 flex items-center justify-center min-w-[36px]"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -208,6 +208,22 @@ export default function Navbar({ currentPage, setCurrentPage, onOpenSearch, user
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-obsidian-900/10 bg-canvas px-4 pt-3 pb-6 space-y-2 shadow-xl animate-fadeIn">
+          {/* Mobile Quick Search Bar Button in Drawer */}
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onOpenSearch();
+            }}
+            className="w-full flex items-center justify-between p-3 bg-white border-2 border-obsidian-950 rounded-xs font-mono text-xs text-obsidian-900 hover:border-lime hover:bg-lime/10 transition-all shadow-brutal-sm cursor-pointer mb-2"
+          >
+            <div className="flex items-center gap-2.5 text-obsidian-900/80">
+              <Search className="w-4 h-4 text-obsidian-950 shrink-0" />
+              <span className="font-semibold">SEARCH MATERIALS & GUIDES...</span>
+            </div>
+            <span className="px-2 py-0.5 bg-canvas-200 border border-obsidian-900/20 text-[10px] font-bold font-mono rounded-xs">
+              CMD+K
+            </span>
+          </button>
           
           {/* Mobile Profile Badge Card */}
           {userProfile && (
