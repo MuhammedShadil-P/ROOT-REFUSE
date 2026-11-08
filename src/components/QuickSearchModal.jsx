@@ -121,7 +121,7 @@ export default function QuickSearchModal({ isOpen, onClose, onSelectItem }) {
               </p>
             </div>
           ) : (
-            filteredItems.map((item) => (
+            (filteredItems || []).map((item) => (
               <div
                 key={item.id}
                 onClick={() => {

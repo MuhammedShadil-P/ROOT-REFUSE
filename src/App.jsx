@@ -8,6 +8,7 @@ import TutorialDetailModal from './components/TutorialDetailModal';
 import DeveloperModal from './components/DeveloperModal';
 import EcoCatch from './components/EcoCatch';
 import InteractiveParticleBackground from './components/InteractiveParticleBackground';
+import ErrorBoundary from './components/ErrorBoundary';
 import HomePage from './pages/HomePage';
 import ScannerPage from './pages/ScannerPage';
 import CommunityPage from './pages/CommunityPage';
@@ -134,7 +135,8 @@ export default function App() {
       />
 
       {/* Main Multi-Page Screen Switcher */}
-      <main className="flex-1 w-full max-w-full overflow-x-hidden">
+      <ErrorBoundary onReset={() => setCurrentPage("home")}>
+        <main className="flex-1 w-full max-w-full overflow-x-hidden">
         {currentPage === 'home' && (
           <HomePage
             onNavigate={navigateTo}
@@ -175,6 +177,7 @@ export default function App() {
           />
         )}
       </main>
+      </ErrorBoundary>
 
       {/* Editorial Brutalist Footer with Wireframe Tunnel & Coordinates */}
       <Footer onNavigate={navigateTo} onOpenCredits={() => setIsDeveloperModalOpen(true)} ecoCatchEnabled={ecoCatchEnabled} onToggleEcoCatch={toggleEcoCatch} />

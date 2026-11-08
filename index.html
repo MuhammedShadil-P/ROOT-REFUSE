@@ -909,6 +909,94 @@
       ];
 
       // ==========================================
+      // ERROR BOUNDARY (DEFENSIVE STABILITY SHIELD)
+      // ==========================================
+      class ErrorBoundary extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = { hasError: false, error: null };
+        }
+
+        static getDerivedStateFromError(error) {
+          return { hasError: true, error };
+        }
+
+        componentDidCatch(error, errorInfo) {
+          // Unhandled fault caught by interface boundary
+        }
+
+        handleReset = () => {
+          this.setState({ hasError: false, error: null });
+          if (this.props.onReset) {
+            this.props.onReset();
+          }
+        };
+
+        handleReload = () => {
+          window.location.reload();
+        };
+
+        render() {
+          if (this.state.hasError) {
+            if (this.props.fallback) {
+              return this.props.fallback;
+            }
+
+            return (
+              <div className="min-h-[480px] w-full flex items-center justify-center p-4 sm:p-8 bg-obsidian-950 text-white font-mono">
+                <div className="max-w-xl w-full border-2 border-lime/40 bg-obsidian-900/95 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                  <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
+                    <div className="flex items-center gap-2 text-lime font-bold text-xs uppercase tracking-widest">
+                      <span className="w-2.5 h-2.5 rounded-full bg-lime animate-ping"></span>
+                      <span>SYSTEM FAULT INTERCEPTED // RECOVERY ACTIVE</span>
+                    </div>
+                    <span className="text-[10px] text-white/40 uppercase">STATUS 500_DEFENSE</span>
+                  </div>
+
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-2 text-rose-400 font-editorial-condensed text-xl uppercase font-black">
+                      <IconAlertTriangle className="w-5 h-5 text-rose-400 shrink-0" />
+                      <span>UNEXPECTED INTERFACE DISTURBANCE</span>
+                    </div>
+                    <p className="text-xs text-obsidian-300 leading-relaxed font-sans">
+                      The application encountered an unhandled rendering condition. Root & Refuse defense boundaries isolated the issue to prevent global crash.
+                    </p>
+                    {this.state.error?.message && (
+                      <div className="p-3 bg-black/70 border border-white/10 rounded-xs">
+                        <span className="text-[10px] text-lime font-bold uppercase block mb-1">EXCEPTION TRACE:</span>
+                        <pre className="text-[11px] text-rose-300 overflow-x-auto whitespace-pre-wrap font-mono">
+                          {this.state.error.message}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-white/10">
+                    <button
+                      onClick={this.handleReset}
+                      className="flex items-center justify-center gap-2 py-3 px-4 bg-lime text-obsidian-950 font-bold text-xs uppercase tracking-wider hover:bg-lime/90 transition-all cursor-pointer shadow-brutal-sm active:translate-x-0.5 active:translate-y-0.5"
+                    >
+                      <IconSparkles className="w-3.5 h-3.5" />
+                      <span>RE-INITIALIZE VIEW</span>
+                    </button>
+                    <button
+                      onClick={this.handleReload}
+                      className="flex items-center justify-center gap-2 py-3 px-4 bg-obsidian-800 text-white border border-white/20 font-bold text-xs uppercase tracking-wider hover:bg-obsidian-700 transition-all cursor-pointer"
+                    >
+                      <IconRecycle className="w-3.5 h-3.5" />
+                      <span>RELOAD APPLICATION</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          return this.props.children;
+        }
+      }
+
+      // ==========================================
       // ROOT APP COMPONENT
       // ==========================================
       function App() {
@@ -1013,7 +1101,8 @@
             />
 
             {/* Main Page Route Switcher */}
-            <main className="flex-1 w-full max-w-full overflow-x-hidden">
+            <ErrorBoundary onReset={() => setCurrentPage("home")}>
+              <main className="flex-1 w-full max-w-full overflow-x-hidden">
               {currentPage === 'home' && (
                 <HomePage
                   onNavigate={navigateTo}
@@ -1060,6 +1149,7 @@
                 />
               )}
             </main>
+            </ErrorBoundary>
 
             <Footer onNavigate={navigateTo} onOpenCredits={() => setDeveloperModalOpen(true)} ecoCatchEnabled={ecoCatchEnabled} onToggleEcoCatch={toggleEcoCatch} />
 
@@ -2395,7 +2485,7 @@
                             {/* 2. Interactive Bounding-Box Mock Results */}
                             {!isScanning && detectedItem && arOverlayEnabled && (
                               <div className="absolute inset-0 pointer-events-auto z-20">
-                                {getARBoxes(detectedItem).map(box => {
+                                {(getARBoxes(detectedItem) || []).map(box => {
                                   const isSelected = selectedBoxId === box.id;
 
                                   return (
@@ -2614,7 +2704,7 @@
                 {/* 2-Column Details */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                   <div className="lg:col-span-5 space-y-3">
-                    {filtered.map((item) => (
+                    {(filtered || []).map((item) => (
                       <div
                         key={item.id}
                         onClick={() => {
@@ -2667,7 +2757,7 @@
                         <span>DISPOSAL CHECKLIST:</span>
                       </h4>
                       <ol className="space-y-1 bg-canvas p-3 border border-obsidian-900/10 rounded-xs text-xs font-mono">
-                        {activeItem.instructions.map((step, idx) => (
+                        {(activeItem?.instructions || []).map((step, idx) => (
                           <li key={idx} className="flex gap-2">
                             <span className="font-bold text-cobalt">0{idx + 1}.</span>
                             <span>{step}</span>
@@ -2792,7 +2882,7 @@
 
               {/* Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filtered.map((tut) => {
+                {(filtered || []).map((tut) => {
                   const isUp = !!upvotesMap[tut.id];
                   return (
                     <div
@@ -3072,7 +3162,7 @@
             )}
 
             <div className="divide-y divide-obsidian-900/10 max-h-[460px] overflow-y-auto pr-1 space-y-1">
-              {filtered.map(act => {
+              {(filtered || []).map(act => {
                 const currentKudos = kudosState[act.id] || { count: act.kudos, sent: false };
 
                 return (
@@ -3294,7 +3384,7 @@
                   <circle cx="50" cy="50" r="20" fill="none" stroke="#CCFF00" strokeWidth="0.4" strokeDasharray="2,2" opacity="0.5" />
                 </svg>
 
-                {filtered.map(fac => {
+                {(filtered || []).map(fac => {
                   const isSel = selectedFac.id === fac.id;
                   const isAlert = fac.isIncident || fac.category === 'incident';
                   return (
@@ -3399,7 +3489,7 @@
                   <div className="space-y-2">
                     <span className="font-mono text-xs font-bold block uppercase">ACCEPTED STREAMS:</span>
                     <div className="flex flex-wrap gap-2">
-                      {selectedFac.acceptedMaterials.map((mat, i) => (
+                      {(selectedFac?.acceptedMaterials || []).map((mat, i) => (
                         <span key={i} className="px-2.5 py-1 bg-canvas-200 border border-obsidian-900/10 font-mono text-xs rounded-xs">
                           ✓ {mat}
                         </span>
@@ -3429,7 +3519,7 @@
                 </div>
 
                 <div className="lg:col-span-5 space-y-3">
-                  {filtered.map(fac => (
+                  {(filtered || []).map(fac => (
                     <div
                       key={fac.id}
                       onClick={() => { setSelectedFac(fac); setShowRoute(false); }}
@@ -4475,7 +4565,7 @@
               </div>
 
               <div className="max-h-60 overflow-y-auto space-y-2">
-                {results.map(item => (
+                {(results || []).map(item => (
                   <div
                     key={item.id}
                     onClick={() => { onSelectItem(item); onClose(); }}
@@ -5383,7 +5473,11 @@
 
       // Render root
       const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(<App />);
+      root.render(
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
+      );
     </script>
   </body>
 </html>

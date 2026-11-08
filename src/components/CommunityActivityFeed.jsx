@@ -225,7 +225,7 @@ export default function CommunityActivityFeed({ onRewardPoints }) {
 
       {/* Activity List Stream */}
       <div className="divide-y divide-obsidian-900/10 max-h-[460px] overflow-y-auto pr-1 space-y-1">
-        {filteredActivities.map(act => {
+        {(filteredActivities || []).map(act => {
           const currentKudos = kudosState[act.id] || { count: act.kudos, sent: false };
 
           return (

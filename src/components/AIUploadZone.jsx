@@ -29,6 +29,7 @@ export default function AIUploadZone({ onResultFound }) {
   const [previewImage, setPreviewImage] = useState(null);
   const [detectedItem, setDetectedItem] = useState(null);
   const [cameraActive, setCameraActive] = useState(false);
+  const [cameraError, setCameraError] = useState(null);
   const [arOverlayEnabled, setArOverlayEnabled] = useState(true);
   const [selectedBoxId, setSelectedBoxId] = useState(null);
   const fileInputRef = useRef(null);
@@ -116,19 +117,25 @@ export default function AIUploadZone({ onResultFound }) {
   const toggleCamera = async () => {
     if (cameraActive) {
       setCameraActive(false);
+      setCameraError(null);
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject;
         stream.getTracks().forEach(track => track.stop());
       }
     } else {
+      setCameraError(null);
       try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('Camera access API is unavailable in this environment.');
+        }
         const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
         setCameraActive(true);
       } catch (err) {
-        setCameraActive(true);
+        setCameraActive(false);
+        setCameraError(err.message || 'Camera access permission denied or no camera device found. Please use file upload or sample presets.');
       }
     }
   };
@@ -269,7 +276,7 @@ export default function AIUploadZone({ onResultFound }) {
                   {/* 2. Interactive Bounding-Box Mock Results */}
                   {!isScanning && detectedItem && arOverlayEnabled && (
                     <div className="absolute inset-0 pointer-events-auto z-20">
-                      {currentBoxes.map(box => {
+                      {(currentBoxes || []).map(box => {
                         const isSelected = selectedBoxId === box.id;
 
                         return (
@@ -459,7 +466,7 @@ export default function AIUploadZone({ onResultFound }) {
                     📋 PREPARATION PROTOCOL:
                   </span>
                   <ol className="space-y-1.5 font-mono text-xs text-obsidian-900/80">
-                    {detectedItem.instructions.map((step, idx) => (
+                    {(detectedItem?.instructions || []).map((step, idx) => (
                       <li key={idx} className="flex items-start gap-2">
                         <span className="font-bold text-cobalt shrink-0">0{idx + 1}.</span>
                         <span>{step}</span>

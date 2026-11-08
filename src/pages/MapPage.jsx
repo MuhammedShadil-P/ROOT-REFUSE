@@ -334,7 +334,7 @@ export default function MapPage({ onNavigate, onRewardPoints }) {
                 ACCEPTED POST-CONSUMER STREAMS:
               </span>
               <div className="flex flex-wrap gap-2">
-                {selectedFacility.acceptedMaterials.map((mat, idx) => (
+                {(selectedFacility?.acceptedMaterials || []).map((mat, idx) => (
                   <span
                     key={idx}
                     className="px-3 py-1 bg-canvas-200 border border-obsidian-900/15 font-mono text-xs text-obsidian-950 font-bold rounded-xs flex items-center gap-1"
@@ -405,7 +405,7 @@ export default function MapPage({ onNavigate, onRewardPoints }) {
             </div>
 
             <div className="space-y-3 max-h-[620px] overflow-y-auto pr-1">
-              {filteredFacilities.map((fac) => {
+              {(filteredFacilities || []).map((fac) => {
                 const isSelected = selectedFacility.id === fac.id;
 
                 return (

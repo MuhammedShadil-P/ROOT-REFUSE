@@ -139,7 +139,7 @@ export default function ScannerPage({ onNavigate, initialSelectedItem, onRewardP
             
             {/* Left Column: Item Grid / List */}
             <div className="lg:col-span-5 space-y-3">
-              {filteredItems.map((item) => {
+              {(filteredItems || []).map((item) => {
                 const isSelected = activeItem.id === item.id;
                 return (
                   <div
@@ -253,7 +253,7 @@ export default function ScannerPage({ onNavigate, initialSelectedItem, onRewardP
                 </h4>
 
                 <div className="space-y-2 bg-canvas p-4 border border-obsidian-900/10 rounded-xs">
-                  {activeItem.instructions.map((step, idx) => (
+                  {(activeItem?.instructions || []).map((step, idx) => (
                     <div key={idx} className="flex items-start gap-3 text-xs font-sans text-obsidian-900">
                       <span className="w-5 h-5 rounded-full bg-obsidian-950 text-white font-mono text-[10px] flex items-center justify-center shrink-0 font-bold mt-0.5">
                         {idx + 1}
