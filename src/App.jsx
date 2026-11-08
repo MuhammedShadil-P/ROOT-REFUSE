@@ -6,6 +6,7 @@ import CustomCursor from './components/CustomCursor';
 import QuickSearchModal from './components/QuickSearchModal';
 import TutorialDetailModal from './components/TutorialDetailModal';
 import DeveloperModal from './components/DeveloperModal';
+import EcoCatch from './components/EcoCatch';
 import HomePage from './pages/HomePage';
 import ScannerPage from './pages/ScannerPage';
 import CommunityPage from './pages/CommunityPage';
@@ -20,6 +21,9 @@ export default function App() {
   const [selectedItemForScanner, setSelectedItemForScanner] = useState(null);
   const [previewTutorial, setPreviewTutorial] = useState(null);
   const [upvotedState, setUpvotedState] = useState({});
+  const [ecoCatchEnabled, setEcoCatchEnabled] = useState(true);
+
+  const toggleEcoCatch = () => setEcoCatchEnabled(prev => !prev);
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
@@ -169,7 +173,7 @@ export default function App() {
       </main>
 
       {/* Editorial Brutalist Footer with Wireframe Tunnel & Coordinates */}
-      <Footer onNavigate={navigateTo} onOpenCredits={() => setIsDeveloperModalOpen(true)} />
+      <Footer onNavigate={navigateTo} onOpenCredits={() => setIsDeveloperModalOpen(true)} ecoCatchEnabled={ecoCatchEnabled} onToggleEcoCatch={toggleEcoCatch} />
 
       {/* Global Quick Search Modal (Cmd+K) */}
       <QuickSearchModal
@@ -191,6 +195,13 @@ export default function App() {
       <DeveloperModal
         isOpen={isDeveloperModalOpen}
         onClose={() => setIsDeveloperModalOpen(false)}
+      />
+
+      {/* Interactive Non-Intrusive Eco-Catch Mini-Game */}
+      <EcoCatch
+        isEnabled={ecoCatchEnabled}
+        onToggle={toggleEcoCatch}
+        onReward={(points) => handleAddCredits(points)}
       />
     </div>
   );

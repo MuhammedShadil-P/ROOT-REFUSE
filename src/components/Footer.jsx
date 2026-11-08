@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Globe, Sparkles, Send, CheckCircle2 } from 'lucide-react';
 
-export default function Footer({ onNavigate, onOpenCredits }) {
+export default function Footer({ onNavigate, onOpenCredits, ecoCatchEnabled = true, onToggleEcoCatch }) {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -183,7 +183,7 @@ export default function Footer({ onNavigate, onOpenCredits }) {
           {/* Col 4: Coordinates & Direct */}
           <div>
             <span className="font-mono text-xs uppercase text-lime tracking-widest block mb-4 font-bold">
-              // TERMINAL DISPATCH
+              // TERMINAL DISPATCH & PREFS
             </span>
             <div className="font-mono text-xs text-white/70 space-y-2">
               <p className="text-white">HELLO@ROOTREFUSE.ECO</p>
@@ -191,6 +191,25 @@ export default function Footer({ onNavigate, onOpenCredits }) {
               <p className="text-white/50 text-[11px] pt-1">
                 OPERATING ACROSS 14 METROPOLITAN REGIONS & 42 DROP-OFF VAULTS.
               </p>
+
+              {/* Quiet Eco-Catch Game Toggle Switch */}
+              {onToggleEcoCatch && (
+                <div className="pt-2">
+                  <span className="text-[10px] text-white/50 uppercase font-mono block mb-1">MINI-GAME EXPERIENCE:</span>
+                  <button
+                    onClick={onToggleEcoCatch}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-mono text-[10px] font-bold uppercase tracking-wider border transition-all ${
+                      ecoCatchEnabled
+                        ? 'bg-lime/20 text-lime border-lime/60 hover:bg-lime/30'
+                        : 'bg-obsidian-800 text-white/50 border-white/20 hover:text-white'
+                    }`}
+                    title="Toggle ambient falling scrap recycling game"
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${ecoCatchEnabled ? 'bg-lime animate-ping' : 'bg-white/40'}`}></span>
+                    <span>ECO-CATCH: {ecoCatchEnabled ? 'ENABLED (+10 PTS)' : 'DISABLED'}</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
