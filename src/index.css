@@ -208,3 +208,40 @@
 .animate-backdrop-fade {
   animation: backdropFade 0.25s ease-out forwards;
 }
+
+/* Eco-Catch Glowing Target & Snap Animations */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(204, 255, 0, 0.45), 0 0 30px rgba(204, 255, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(204, 255, 0, 0.85), 0 0 48px rgba(204, 255, 0, 0.45);
+  }
+}
+
+@keyframes bounceSubtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes dashFlow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounceSubtle 2.2s ease-in-out infinite;
+}
+
+.animate-dash-flow {
+  animation: dashFlow 1s linear infinite;
+}
